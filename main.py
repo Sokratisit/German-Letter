@@ -353,7 +353,7 @@ if __name__ == '__main__':
     # )
 
     # Use sender-receiver combination
-    predefined_mains['albert_prof'](
+    predefined_mains['albert_tel_prof'](
         opening="Sehr geehrter Herr Professor Wahlster,",
         body="Ich hoffe, dieser Brief erreicht Sie wohlbehalten."
     )

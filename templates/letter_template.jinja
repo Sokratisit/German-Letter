@@ -9,14 +9,10 @@
 \setkomavar{fromname}{\raggedright {{ from_name }} }
 {% if from_address %}\setkomavar{fromaddress}{\raggedright {{ from_address }} }{% endif %}
 {% if my_ref %}\setkomavar{myref}{\raggedright {{ my_ref }} }{% endif %}
-{% if from_phone %}\setkomavar{fromphone}{ {{ from_phone }} }
-\KOMAoptions{fromphone}
-{%- endif %}
+{% if from_phone %}\setkomavar{fromphone}{ {{ from_phone }} }\n\KOMAoptions{fromphone}{% endif %}
 {% if phone_separator %}\setkomavar{phoneseparator}{ {{ phone_separator }} }{% endif %}
-{% if from_email %}\setkomavar{fromemail}{ {{ from_email }} }
-\KOMAoptions{fromemail}{% endif %}
-{% if from_mobile_phone %}\setkomavar{frommobilephone}{ {{ from_mobile_phone }} }
-\KOMAoptions{frommobilephone}{% endif %}
+{% if from_email %}\setkomavar{fromemail}{ {{ from_email }} }\n\KOMAoptions{fromemail}{% endif %}
+{% if from_mobile_phone %}\setkomavar{frommobilephone}{ {{ from_mobile_phone }} }\n\KOMAoptions{frommobilephone}{% endif %}
 {% if from_fax %}\setkomavar{fromfax}{ {{ from_fax }} }{% endif %}
 {% if fax_separator %}\setkomavar{faxseparator}{ {{ fax_separator }} }{% endif %}
 {% if email_separator %}\setkomavar{emailseparator}{ {{ email_separator }} }{% endif %}
@@ -25,12 +21,12 @@
 {% if back_address %}\setkomavar{backaddress}{ {{ back_address }} }{% endif %}
 {% if place %}\setkomavar{place}{ {{ place }} }{% endif %}
 {% if place_separator %}\setkomavar{placeseparator}{ {{ place_separator }} }{% endif %}
+{% if location %}\setkomavar{location}{ {{ location }} }{% endif %}
 {% if date %}\setkomavar{date}{ {{ date }} }{% endif %}
 {% if signature %}\setkomavar{signature}{ {{ signature }} }{% endif %}
 {% if address_image %}\setkomavar{addressimage}{ {{ address_image }} }{% endif %}
 {% if back_address_separator %}\setkomavar{backaddressseparator}{ {{ back_address_separator }} }{% endif %}
 {% if from_bank %}\setkomavar{frombank}{ {{ from_bank }} }{% endif %}
-{% if location %}\setkomavar{location}{ {{ location }} }{% endif %}
 {% if from_logo %}\setkomavar{fromlogo}{ {{ from_logo }} }{% endif %}
 {% if from_zip_code %}\setkomavar{fromzipcode}{ {{ from_zip_code }} }{% endif %}
 {% if my_ref %}\setkomavar{myref}{ {{ my_ref }} }{% endif %}
@@ -38,7 +34,6 @@
 {% if pp_code %}\setkomavar{PPcode}{ {{ pp_code }} }{% endif %}
 
 % Recipient Information
-{#\setkomavar{toaddress}{ {{ to_address }} }#}
 {% if to_name %}\setkomavar{toname}{ {{ to_name }} }{% endif %}
 {% if yourref %}\setkomavar{yourref}{ {{ yourref }} }{% endif %}
 {% if yourmail %}\setkomavar{yourmail}{ {{ yourmail }} }{% endif %}
@@ -57,10 +52,12 @@
 {% if next_head %}\setkoma{nexthead}{ {{ next_head }} }{% endif %}
 {% if special_mail %}\setkomavar{specialmail}{ {{ special_mail }} }{% endif %}
 
+% Options
 \KOMAoption{subject}{titled}
 \KOMAoption{fromrule}{off} % line after sender address
 \setplength{toaddrwidth}{100mm}
 
+% Body
 \begin{document}
 
 \begin{letter}{ {{ to_name }} \\ {{ to_address }} }
