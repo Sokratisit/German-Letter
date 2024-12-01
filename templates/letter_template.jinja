@@ -6,24 +6,63 @@
 \renewcommand{\familydefault}{\sfdefault}
 \renewcommand*{\raggedsignature}{\raggedright}
 
-\KOMAoptions{subject=titled}
+% Ensure address block alignment
+\KOMAoptions{fromalign=left, fromrule=on, fromphone=on, fromemail=on, fromurl=on}
 
+% Sender Information
 \setkomavar{fromname}{\raggedright {{ from_name }} }
-{% if from_address %}\setkomavar{fromaddress}{\raggedright {{ from_address }} }{% endif %}
-{% if backaddress %}\setkomavar{backaddress}{ {{ backaddress }} }{% endif %}
-{% if from_phone %}\setkomavar{fromphone}{ {{ from_phone }} }{% endif %}
-{% if from_email %}\setkomavar{fromemail}{ {{ from_email }} }{% endif %}
-{% if subject %}\setkomavar{subject}{ {{ subject }} }{% endif %}
+{% if fromaddress %}\setkomavar{fromaddress}{\raggedright {{ from_address }} }{% endif %}
+{% if fromphone %}\setkomavar{fromphone}{ {{ from_phone }} }{% endif %}
+{% if frommobilephone %}\setkomavar{frommobilephone}{ {{ from_mobile_phone }} }{% endif %}
+{% if fromfax %}\setkomavar{fromfax}{ {{ from_fax }} }{% endif %}
+{% if fromemail %}\setkomavar{fromemail}{ {{ from_email }} }{% endif %}
+{% if fromurl %}\setkomavar{fromurl}{ {{ from_url }} }{% endif %}
+{% if frombank %}\setkomavar{frombank}{ {{ from_bank }} }{% endif %}
+{% if place %}\setkomavar{place}{ {{ place }} }{% endif %}
 {% if date %}\setkomavar{date}{ {{ date }} }{% endif %}
+{% if signature %}\setkomavar{signature}{ {{ signature }} }{% endif %}
+{% if backaddress %}\setkomavar{backaddress}{ {{ backaddress }} }{% endif %}
+
+% Recipient Information
+{% if yourref %}\setkomavar{yourref}{ {{ yourref }} }{% endif %}
+{% if yourmail %}\setkomavar{yourmail}{ {{ yourmail }} }{% endif %}
+{% if myref %}\setkomavar{myref}{ {{ myref }} }{% endif %}
+{% if customer %}\setkomavar{customer}{ {{ customer }} }{% endif %}
+{% if invoice %}\setkomavar{invoice}{ {{ invoice }} }{% endif %}
+{% if subject %}\setkomavar{subject}{ {{ subject }} }{% endif %}
+
+% Additional Fields
+{% if phonename %}\setkomavar{phonename}{ {{ phone_name }} }{% endif %}
+{% if mobilephonename %}\setkomavar{mobilephonename}{ {{ mobile_phone_name }} }{% endif %}
+{% if faxname %}\setkomavar{faxname}{ {{ fax_name }} }{% endif %}
+{% if emailname %}\setkomavar{emailname}{ {{ email_name }} }{% endif %}
+{% if wwwname %}\setkomavar{wwwname}{ {{ www_name }} }{% endif %}
+{% if bankname %}\setkomavar{bankname}{ {{ bank_name }} }{% endif %}
+{% if location %}\setkomavar{location}{ {{ location }} }{% endif %}
+{% if headfrom %}\setkomavar{headfrom}{ {{ head_from }} }{% endif %}
+{% if customername %}\setkomavar{customername}{ {{ customer_name }} }{% endif %}
+{% if invoicename %}\setkomavar{invoicename}{ {{ invoice_name }} }{% endif %}
+{% if myrefname %}\setkomavar{myrefname}{ {{ my_ref_name }} }{% endif %}
+{% if yourrefname %}\setkomavar{yourrefname}{ {{ your_ref_name }} }{% endif %}
+{% if yourmailname %}\setkomavar{yourmailname}{ {{ your_mail_name }} }{% endif %}
+{% if subjectname %}\setkomavar{subjectname}{ {{ subject_name }} }{% endif %}
+{% if datename %}\setkomavar{datename}{ {{ date_name }} }{% endif %}
 
 \begin{document}
 
+% Recipient Address
 \begin{letter}{\raggedright {{ recipient_address }} }
+
+% Opening
 \opening{ {{ opening }} }
 
+% Body
 {{ body }}
 
+% Closing
 \closing{ {{ closing }} }
+
+% Enclosures and Postscript
 {% if encl %}\encl{ {{ encl }} }{% endif %}
 {% if ps %}\ps{ {{ ps }} }{% endif %}
 \end{letter}

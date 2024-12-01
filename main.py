@@ -119,7 +119,8 @@ def main(
         backaddress = generate_backaddress(from_name, from_address)
 
     # Format addresses for LaTeX
-    formatted_from_address = format_address_for_latex(from_address) if from_address else None
+    # formatted_from_address = format_address_for_latex(from_address) if from_address else None
+    formatted_from_address = from_address
     formatted_recipient_address = format_address_for_latex(recipient_address)
 
     # Generate the date if not provided
