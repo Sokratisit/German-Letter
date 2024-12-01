@@ -43,26 +43,44 @@ def generate_pdf(tex_path: str, output_dir: str) -> None:
         raise RuntimeError(f"pdflatex failed with error:\n{error_message}")
 
 
-def generate_backaddress(from_name: str, from_address: str | None) -> str | None:
+def format_address_for_latex(address: str) -> str:
+    """
+    Format an address string for LaTeX.
+
+    :param address: The input address string, which may include '\n', ', ', or ','.
+    :return: A properly formatted LaTeX string where '\n', ', ', and ',' are replaced with ' \\ '.
+    """
+    if not address:
+        return ''
+
+    # Replace address separators with LaTeX line breaks
+    return address.replace('\n', r' \\ ').replace(', ', r' \\ ').replace(',', r' \\ ')
+
+
+def generate_backaddress(from_name: str, from_address: str | None, separator: str = ', ') -> str | None:
     """
     Generate the backaddress by abbreviating the first name and combining it with the address.
 
     :param from_name: Full name of the sender.
     :param from_address: Full address of the sender. If None, no backaddress is generated.
+    :param separator: Separator to use between the name and the address components.
     :return: The formatted backaddress, or None if required inputs are missing.
     """
     if not from_name or not from_address:
         return None
 
+    # Normalize the address to a single line, removing any '\n' or redundant separators
+    normalized_address = from_address.replace('\n', separator).replace(', ', separator).replace(',', separator).strip()
+
     # Split the name into first and last parts
     name_parts = from_name.split()
     if len(name_parts) < 2:
-        return f'{from_name}, {from_address}'  # Use full name if no last name
+        return f'{from_name}{separator}{normalized_address}'  # Use full name if no last name
 
     # Create the backaddress
     first_initial = name_parts[0][0] + '.'
     last_name = ' '.join(name_parts[1:])  # Handle compound last names
-    return f'{first_initial} {last_name}, {from_address}'
+    return f'{first_initial} {last_name}{separator}{normalized_address}'
 
 
 def main(
@@ -100,6 +118,10 @@ def main(
     if not backaddress:
         backaddress = generate_backaddress(from_name, from_address)
 
+    # Format addresses for LaTeX
+    formatted_from_address = format_address_for_latex(from_address) if from_address else None
+    formatted_recipient_address = format_address_for_latex(recipient_address)
+
     # Generate the date if not provided
     if not date:
         now = datetime.now()
@@ -115,11 +137,11 @@ def main(
     # Context for the LaTeX template
     context = {
         'from_name': from_name,
-        'from_address': from_address,
+        'from_address': formatted_from_address,
         'from_phone': from_phone,
         'from_email': from_email,
         'subject': subject,
-        'recipient_address': recipient_address,
+        'recipient_address': formatted_recipient_address,
         'opening': opening,
         'body': body,
         'closing': closing,
@@ -139,7 +161,7 @@ if __name__ == '__main__':
     main(
         from_name='John Doe',
         from_address='123 Main Street, City, Country',
-        recipient_address='Jane Smith \\ 456 Another Street \\ City, Country',
+        recipient_address='Jane Smith, 456 Another Street, City, Country',
         opening='Dear Jane,',
         body='This is an example letter with an updated date format and place.',
         closing='Sincerely, John Doe',
