@@ -1,8 +1,6 @@
 import os
-import subprocess
-
 from jinja2 import Environment, FileSystemLoader
-
+import subprocess
 
 def render_template(template_name, output_path, context):
     """
@@ -13,7 +11,6 @@ def render_template(template_name, output_path, context):
     rendered_content = template.render(context)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(rendered_content)
-
 
 def generate_pdf(tex_path, output_dir):
     """
@@ -29,7 +26,6 @@ def generate_pdf(tex_path, output_dir):
     except subprocess.CalledProcessError as e:
         print("Error while generating PDF:", e.stderr.decode())
         raise
-
 
 def generate_backaddress(from_name, from_address):
     """
