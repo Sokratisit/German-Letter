@@ -1,0 +1,38 @@
+\documentclass[version=last]{scrlttr2}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand*{\raggedsignature}{\raggedright}
+
+\KOMAoptions{subject=titled}
+
+\setkomavar{fromname}{ {{ from_name }} }
+{% if from_address %}
+\setkomavar{fromaddress}{ {{ from_address }} }
+{% endif %}
+{% if from_phone %}
+\setkomavar{fromphone}{ {{ from_phone }} }
+{% endif %}
+{% if from_email %}
+\setkomavar{fromemail}{ {{ from_email }} }
+{% endif %}
+{% if subject %}
+\setkomavar{subject}{ {{ subject }} }
+{% endif %}
+{% if backaddress %}
+\setkomavar{backaddress}{ {{ backaddress }} }
+{% endif %}
+
+\begin{document}
+
+\begin{letter}{ {{ recipient_name }} \\ {{ recipient_address }} }
+\opening{ {{ opening }} }
+
+{{ body }}
+
+\closing{ {{ closing }} }
+
+\end{letter}
+\end{document}

@@ -1,0 +1,35 @@
+\documentclass[version=last]{scrlttr2}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand*{\raggedsignature}{\raggedright}
+
+\KOMAoptions{subject=titled}
+
+\setkomavar{fromname}{ John Doe }
+
+\setkomavar{fromaddress}{ 123 Main Street
+City, Country }
+
+
+
+
+
+\setkomavar{backaddress}{ J. Doe, 123 Main Street
+City, Country }
+
+
+\begin{document}
+
+\begin{letter}{ Jane Smith \\ 456 Another Street
+City, Country }
+\opening{ Dear Jane, }
+
+This is a sample letter created with auto-generated backaddress.
+
+\closing{ Sincerely, John Doe }
+
+\end{letter}
+\end{document}
