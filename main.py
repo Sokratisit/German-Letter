@@ -1,5 +1,6 @@
 import os
 import subprocess
+from datetime import datetime
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -65,16 +66,18 @@ def generate_backaddress(from_name: str, from_address: str | None) -> str | None
 
 
 def main(
-        from_name: str,
-        recipient_address: str,
-        opening: str,
-        body: str,
-        closing: str,
-        from_address: str | None = None,
-        from_phone: str | None = None,
-        from_email: str | None = None,
-        subject: str | None = None,
-        backaddress: str | None = None,
+    from_name: str,
+    recipient_address: str,
+    opening: str,
+    body: str,
+    closing: str,
+    from_address: str | None = None,
+    from_phone: str | None = None,
+    from_email: str | None = None,
+    subject: str | None = None,
+    backaddress: str | None = None,
+    place: str | None = None,
+    date: str | None = None,
 ) -> None:
     """
     Main function to create a letter and generate a PDF.
@@ -89,11 +92,19 @@ def main(
     :param from_email: Optional sender's email address.
     :param subject: Optional subject of the letter.
     :param backaddress: Optional backaddress; auto-generated if not provided.
+    :param place: Optional place to include in the date.
+    :param date: Optional date in the format 'DD.MM.YYYY'. Generated automatically if None.
     :return: None
     """
     # Generate backaddress if not provided
     if not backaddress:
         backaddress = generate_backaddress(from_name, from_address)
+
+    # Generate the date if not provided
+    if not date:
+        now = datetime.now()
+        date = now.strftime('%d.%m.%Y')  # Format date as DD.MM.YYYY
+    formatted_date = f'{place}, {date}' if place else date
 
     # Define the output paths
     output_dir = 'output'
@@ -113,6 +124,7 @@ def main(
         'body': body,
         'closing': closing,
         'backaddress': backaddress,
+        'date': formatted_date,  # Inject the formatted date
     }
 
     # Render the template
@@ -129,10 +141,11 @@ if __name__ == '__main__':
         from_address='123 Main Street, City, Country',
         recipient_address='Jane Smith \\ 456 Another Street \\ City, Country',
         opening='Dear Jane,',
-        body='This is an example letter showcasing updated formatting and optional fields.',
+        body='This is an example letter with an updated date format and place.',
         closing='Sincerely, John Doe',
         from_phone='+123456789',
         from_email='john.doe@example.com',
         subject='Regarding Our Discussion',
-        backaddress=None
+        place='Berlin',
+        date=None,  # Auto-generate the current date
     )
