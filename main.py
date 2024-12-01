@@ -2,9 +2,14 @@ import os
 from jinja2 import Environment, FileSystemLoader
 import subprocess
 
-def render_template(template_name, output_path, context):
+def render_template(template_name: str, output_path: str, context: dict) -> None:
     """
-    Render a Jinja2 template with the given context and save to a file.
+    Render a Jinja2 template with the given context and save it to a file.
+
+    :param template_name: The name of the Jinja2 template file.
+    :param output_path: The path where the rendered file will be saved.
+    :param context: A dictionary containing context variables to render the template.
+    :return: None
     """
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template(template_name)
@@ -12,9 +17,14 @@ def render_template(template_name, output_path, context):
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(rendered_content)
 
-def generate_pdf(tex_path, output_dir):
+def generate_pdf(tex_path: str, output_dir: str) -> None:
     """
     Generate a PDF from a LaTeX file using pdflatex.
+
+    :param tex_path: The path to the .tex file to compile.
+    :param output_dir: The directory where the generated PDF will be saved.
+    :return: None
+    :raises RuntimeError: If the pdflatex command fails.
     """
     try:
         subprocess.run(
@@ -24,33 +34,60 @@ def generate_pdf(tex_path, output_dir):
             stderr=subprocess.PIPE
         )
     except subprocess.CalledProcessError as e:
-        print("Error while generating PDF:", e.stderr.decode())
-        raise
+        error_message = e.stderr.decode()
+        print(f"Error while generating PDF:\n{error_message}")
+        raise RuntimeError(f"pdflatex failed with error:\n{error_message}")
 
-def generate_backaddress(from_name, from_address):
+def generate_backaddress(from_name: str, from_address: str | None) -> str | None:
     """
     Generate the backaddress by abbreviating the first name and combining it with the address.
+
+    :param from_name: Full name of the sender.
+    :param from_address: Full address of the sender. If None, no backaddress is generated.
+    :return: The formatted backaddress, or None if required inputs are missing.
     """
     if not from_name or not from_address:
-        return None  # Cannot generate backaddress without both name and address
+        return None
 
     # Split the name into first and last parts
     name_parts = from_name.split()
     if len(name_parts) < 2:
-        return from_name  # If no last name, return the original name
+        return f'{from_name}, {from_address}'  # Use full name if no last name
 
     # Create the backaddress
-    first_initial = name_parts[0][0] + "."
-    last_name = " ".join(name_parts[1:])  # Handle compound last names
-    return f"{first_initial} {last_name}, {from_address}"
+    first_initial = name_parts[0][0] + '.'
+    last_name = ' '.join(name_parts[1:])  # Handle compound last names
+    return f'{first_initial} {last_name}, {from_address}'
 
 
-def main(from_name, recipient_name, recipient_address, opening, body, closing,
-         from_address=None, from_phone=None, from_email=None, subject=None, backaddress=None):
+def main(
+    from_name: str,
+    recipient_name: str,
+    recipient_address: str,
+    opening: str,
+    body: str,
+    closing: str,
+    from_address: str | None = None,
+    from_phone: str | None = None,
+    from_email: str | None = None,
+    subject: str | None = None,
+    backaddress: str | None = None,
+) -> None:
     """
     Main function to create a letter and generate a PDF.
-    Mandatory arguments: from_name, recipient_name, recipient_address, opening, body, closing.
-    Optional arguments: from_address, from_phone, from_email, subject, backaddress.
+
+    :param from_name: Full name of the sender.
+    :param recipient_name: Full name of the recipient.
+    :param recipient_address: Full address of the recipient.
+    :param opening: Letter's opening (e.g., 'Dear').
+    :param body: Main content of the letter.
+    :param closing: Closing remarks (e.g., 'Sincerely').
+    :param from_address: Optional sender's address.
+    :param from_phone: Optional sender's phone number.
+    :param from_email: Optional sender's email address.
+    :param subject: Optional subject of the letter.
+    :param backaddress: Optional backaddress; auto-generated if not provided.
+    :return: None
     """
     # Generate backaddress if not provided
     if not backaddress:
@@ -74,7 +111,7 @@ def main(from_name, recipient_name, recipient_address, opening, body, closing,
         'opening': opening,
         'body': body,
         'closing': closing,
-        'backaddress': backaddress
+        'backaddress': backaddress,
     }
 
     # Render the template
@@ -85,13 +122,16 @@ def main(from_name, recipient_name, recipient_address, opening, body, closing,
     print(f"PDF generated: {pdf_path}")
 
 if __name__ == '__main__':
-    # Example usage with backaddress auto-generated
     main(
-        from_name="John Doe",
-        from_address="123 Main Street\nCity, Country",
-        recipient_name="Jane Smith",
-        recipient_address="456 Another Street\nCity, Country",
-        opening="Dear Jane,",
-        body="This is a sample letter created with auto-generated backaddress.",
-        closing="Sincerely, John Doe"
+        from_name='John Doe',
+        from_address='123 Main Street, City, Country',
+        recipient_name='Jane Smith',
+        recipient_address='456 Another Street, City, Country',
+        opening='Dear Jane,',
+        body='This is an example letter showcasing updated formatting and optional fields.',
+        closing='Sincerely, John Doe',
+        from_phone='+123456789',
+        from_email='john.doe@example.com',
+        subject='Regarding Our Discussion',
+        backaddress=None
     )

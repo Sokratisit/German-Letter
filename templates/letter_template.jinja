@@ -9,24 +9,39 @@
 \KOMAoptions{subject=titled}
 
 \setkomavar{fromname}{ {{ from_name }} }
-{% if from_address -%} \setkomavar{fromaddress}{ {{ from_address }} } {%- endif %}
-{% if backaddress -%} \setkomavar{backaddress}{ {{ backaddress }} } {%- endif %}
-{% if location -%} \setkomavar{location}{ {{ location }} } {%- endif %}
-{% if date -%} \setkomavar{date}{ {{ date }} } {%- endif %}
-{% if yourref -%} \setkomavar{yourref}{ {{ yourref }} } {%- endif %}
-{% if myref -%} \setkomavar{myref}{ {{ myref }} } {%- endif %}
-{% if subject -%} \setkomavar{subject}{ {{ subject }} } {%- endif %}
+{% if from_address -%}
+\setkomavar{fromaddress}{\raggedright {{ from_address }} }
+{%- endif %}
+{% if backaddress -%}
+\setkomavar{backaddress}{ {{ backaddress }} }
+{%- endif %}
+{% if from_phone -%}
+\setkomavar{fromphone}{ {{ from_phone }} }
+{%- endif %}
+{% if from_email -%}
+\setkomavar{fromemail}{ {{ from_email }} }
+{%- endif %}
+{% if subject -%}
+\setkomavar{subject}{ {{ subject }} }
+{%- endif %}
+{% if date -%}
+\setkomavar{date}{ {{ date }} }
+{%- endif %}
 
 \begin{document}
 
-\begin{letter}{ {{ recipient_name }} \\ {{ recipient_address }} }
+\begin{letter}{\raggedright {{ recipient_name }} \\ {{ recipient_address }} }
 \opening{ {{ opening }} }
 
 {{ body }}
 
 \closing{ {{ closing }} }
-{% if encl -%} \encl{ {{ encl }} } {%- endif %}
-{% if ps -%} \ps{ {{ ps }} } {%- endif %}
+{% if encl -%}
+\encl{ {{ encl }} }
+{%- endif %}
+{% if ps -%}
+\ps{ {{ ps }} }
+{%- endif %}
 \end{letter}
 
 \end{document}
