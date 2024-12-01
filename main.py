@@ -1,11 +1,12 @@
 import os
 import subprocess
 from datetime import datetime
+from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
 
-def render_template(template_name: str, output_path: str, context: dict) -> None:
+def render_template(template_name: str, output_path: Path, context: dict) -> None:
     """
     Render a Jinja2 template with the given context and save it to a file.
 
@@ -21,7 +22,7 @@ def render_template(template_name: str, output_path: str, context: dict) -> None
         f.write(rendered_content)
 
 
-def generate_pdf(tex_path: str, output_dir: str) -> None:
+def generate_pdf(tex_path: Path, output_dir: Path) -> None:
     """
     Generate a PDF from a LaTeX file using pdflatex.
 
@@ -43,18 +44,23 @@ def generate_pdf(tex_path: str, output_dir: str) -> None:
         raise RuntimeError(f"pdflatex failed with error:\n{error_message}")
 
 
-def format_address_for_latex(address: str) -> str:
+def format_address_for_latex(address: str, name: str | None = None) -> str:
     """
     Format an address string for LaTeX.
 
+    :param name: The name of the recipient.
     :param address: The input address string, which may include '\n', ', ', or ','.
     :return: A properly formatted LaTeX string where '\n', ', ', and ',' are replaced with ' \\ '.
     """
-    if not address:
+    if not address and not name:
         return ''
 
     # Replace address separators with LaTeX line breaks
-    return address.replace('\n', r' \\ ').replace(', ', r' \\ ').replace(',', r' \\ ')
+    modified_address = ''
+    if name:
+        madified_address = name + r' \\ '
+    modified_address += address.replace('\n', r' \\ ').replace(', ', r' \\ ').replace(',', r' \\ ')
+    return modified_address
 
 
 def generate_backaddress(from_name: str, from_address: str | None, separator: str = ', ') -> str | None:
@@ -83,24 +89,39 @@ def generate_backaddress(from_name: str, from_address: str | None, separator: st
     return f'{first_initial} {last_name}{separator}{normalized_address}'
 
 
+def generate_filename(recipient_name: str) -> str:
+    """
+    Generate a unique filename based on the current timestamp.
+
+    :param recipient_name: The name of the letter's addressee.
+    :return: A unique filename in the format 'YYYYMMDD_HHMMSS'.
+    """
+    now = datetime.now()
+    return f'{now.strftime('%Y-%m-%d')} {recipient_name}'
+
+
 def main(
-    from_name: str,
+    recipient_name: str,
     recipient_address: str,
     opening: str,
     body: str,
-    closing: str,
-    from_address: str | None = None,
+    from_name: str = 'Albert Marks',
+    closing: str = 'Mit freundlichen Grüßen',
+    from_address: str | None = 'Stammheimer Str. 94, 50735 Köln',
     from_phone: str | None = None,
     from_email: str | None = None,
     subject: str | None = None,
-    backaddress: str | None = None,
-    place: str | None = None,
+    back_address: str | None = None,
+    place: str | None = 'Köln',
     date: str | None = None,
+    filename: str | None = None,
 ) -> None:
     """
     Main function to create a letter and generate a PDF.
 
     :param from_name: Full name of the sender.
+
+    :param recipient_name: Full name of the recipient.
     :param recipient_address: Full address of the recipient, including name.
     :param opening: Letter's opening (e.g., 'Dear').
     :param body: Main content of the letter.
@@ -109,19 +130,20 @@ def main(
     :param from_phone: Optional sender's phone number.
     :param from_email: Optional sender's email address.
     :param subject: Optional subject of the letter.
-    :param backaddress: Optional backaddress; auto-generated if not provided.
+    :param back_address: Optional back-address; auto-generated if not provided.
     :param place: Optional place to include in the date.
     :param date: Optional date in the format 'DD.MM.YYYY'. Generated automatically if None.
+    :param filename: Optional filename for the generated PDF.
     :return: None
     """
     # Generate backaddress if not provided
-    if not backaddress:
-        backaddress = generate_backaddress(from_name, from_address)
+    if not back_address:
+        back_address = generate_backaddress(from_name, from_address)
 
     # Format addresses for LaTeX
-    # formatted_from_address = format_address_for_latex(from_address) if from_address else None
-    formatted_from_address = from_address
-    formatted_recipient_address = format_address_for_latex(recipient_address)
+    formatted_from_address = format_address_for_latex(address=from_address) if from_address else None
+    # formatted_from_address = from_address
+    formatted_recipient_address = format_address_for_latex(address=recipient_address, name=recipient_name)
 
     # Generate the date if not provided
     if not date:
@@ -129,11 +151,15 @@ def main(
         date = now.strftime('%d.%m.%Y')  # Format date as DD.MM.YYYY
     formatted_date = f'{place}, {date}' if place else date
 
+    # Generate a filename if not provided
+    if not filename:
+        filename = generate_filename(recipient_name)
+
     # Define the output paths
-    output_dir = 'output'
-    os.makedirs(output_dir, exist_ok=True)
-    tex_path = os.path.join(output_dir, 'letter.tex')
-    pdf_path = os.path.join(output_dir, 'letter.pdf')
+    output_dir = Path('output')
+    output_dir.mkdir(exist_ok=True)
+    tex_path = output_dir / f'{filename}.tex'
+    pdf_path = output_dir / f'{filename}.pdf'
 
     # Context for the LaTeX template
     context = {
@@ -146,7 +172,7 @@ def main(
         'opening': opening,
         'body': body,
         'closing': closing,
-        'backaddress': backaddress,
+        'back_address': back_address,
         'date': formatted_date,  # Inject the formatted date
     }
 
@@ -160,15 +186,19 @@ def main(
 
 if __name__ == '__main__':
     main(
-        from_name='John Doe',
-        from_address='123 Main Street, City, Country',
-        recipient_address='Jane Smith, 456 Another Street, City, Country',
-        opening='Dear Jane,',
-        body='This is an example letter with an updated date format and place.',
-        closing='Sincerely, John Doe',
-        from_phone='+123456789',
-        from_email='john.doe@example.com',
-        subject='Regarding Our Discussion',
-        place='Berlin',
-        date=None,  # Auto-generate the current date
+        # from_name='John Doe',
+        # from_address='123 Main Street, City, Country',
+        recipient_name='Max Mustermann',
+        recipient_address='Musterstr. 42, 12345 Musterstadt',
+        opening='Sehr geehrter Herr Mustermann,',
+        body='''
+dies ist ein Beispielbrief.
+
+Mehr als ein Paragraph.
+''',
+        # closing='Sincerely, John Doe',
+        # from_phone='+123456789',
+        # from_email='john.doe@example.com',
+        # subject='Regarding Our Discussion',
+        # place='Berlin',
     )
