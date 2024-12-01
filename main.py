@@ -1,6 +1,8 @@
 import os
-from jinja2 import Environment, FileSystemLoader
 import subprocess
+
+from jinja2 import Environment, FileSystemLoader
+
 
 def render_template(template_name: str, output_path: str, context: dict) -> None:
     """
@@ -16,6 +18,7 @@ def render_template(template_name: str, output_path: str, context: dict) -> None
     rendered_content = template.render(context)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(rendered_content)
+
 
 def generate_pdf(tex_path: str, output_dir: str) -> None:
     """
@@ -37,6 +40,7 @@ def generate_pdf(tex_path: str, output_dir: str) -> None:
         error_message = e.stderr.decode()
         print(f"Error while generating PDF:\n{error_message}")
         raise RuntimeError(f"pdflatex failed with error:\n{error_message}")
+
 
 def generate_backaddress(from_name: str, from_address: str | None) -> str | None:
     """
@@ -61,24 +65,22 @@ def generate_backaddress(from_name: str, from_address: str | None) -> str | None
 
 
 def main(
-    from_name: str,
-    recipient_name: str,
-    recipient_address: str,
-    opening: str,
-    body: str,
-    closing: str,
-    from_address: str | None = None,
-    from_phone: str | None = None,
-    from_email: str | None = None,
-    subject: str | None = None,
-    backaddress: str | None = None,
+        from_name: str,
+        recipient_address: str,
+        opening: str,
+        body: str,
+        closing: str,
+        from_address: str | None = None,
+        from_phone: str | None = None,
+        from_email: str | None = None,
+        subject: str | None = None,
+        backaddress: str | None = None,
 ) -> None:
     """
     Main function to create a letter and generate a PDF.
 
     :param from_name: Full name of the sender.
-    :param recipient_name: Full name of the recipient.
-    :param recipient_address: Full address of the recipient.
+    :param recipient_address: Full address of the recipient, including name.
     :param opening: Letter's opening (e.g., 'Dear').
     :param body: Main content of the letter.
     :param closing: Closing remarks (e.g., 'Sincerely').
@@ -106,7 +108,6 @@ def main(
         'from_phone': from_phone,
         'from_email': from_email,
         'subject': subject,
-        'recipient_name': recipient_name,
         'recipient_address': recipient_address,
         'opening': opening,
         'body': body,
@@ -121,12 +122,12 @@ def main(
     generate_pdf(tex_path, output_dir)
     print(f"PDF generated: {pdf_path}")
 
+
 if __name__ == '__main__':
     main(
         from_name='John Doe',
         from_address='123 Main Street, City, Country',
-        recipient_name='Jane Smith',
-        recipient_address='456 Another Street, City, Country',
+        recipient_address='Jane Smith \\ 456 Another Street \\ City, Country',
         opening='Dear Jane,',
         body='This is an example letter showcasing updated formatting and optional fields.',
         closing='Sincerely, John Doe',
