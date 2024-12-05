@@ -2,21 +2,29 @@
   "sender": {
     "albert": {
       "from_name": "Albert Marks",
-      "from_address": "Stammheimer Str. 94, 50735 Köln"
+      "from_address": "Stammheimer Str. 94",
+      "from_zip": "50735",
+      "from_city": "Köln"
     },
     "albert_tel": {
       "from_name": "Albert Marks",
-      "from_address": "Stammheimer Str. 94, 50735 Köln",
+      "from_address": "Stammheimer Str. 94",
+      "from_zip": "50735",
+      "from_city": "Köln",
       "from_mobile_phone": "+49 176 9211 6270"
     },
     "albert_email": {
       "from_name": "Albert Marks",
-      "from_address": "Stammheimer Str. 94, 50735 Köln",
+      "from_address": "Stammheimer Str. 94",
+      "from_zip": "50735",
+      "from_city": "Köln",
       "from_email": "albertmarks@gmx.de"
     },
     "student": {
       "from_name": "Albert Marks",
-      "from_address": "Stammheimer Str. 94, 50735 Köln",
+      "from_address": "Stammheimer Str. 94",
+      "from_zip": "50735",
+      "from_city": "Köln",
       "from_email": "amarks2@smail.uni-koeln.de",
       "additional_info": {
         "Matrikelnummer": "5359392"
@@ -24,9 +32,17 @@
     }
   },
   "receiver": {
+    "max": {
+      "to_name": "Max Mustermann",
+      "to_address": "Musterstraße 12",
+      "to_zip": "12345",
+      "to_city": "Musterstadt"
+    },
     "prof": {
       "to_name": "Prof. Dr. rer. nat. Dr. h.c. mult. Wolfgang Wahlster",
-      "to_address": "Deutsches Forschungszentrum für Künstliche Intelligenz GmbH, Trippstadter Str. 122, 67663 Kaiserslautern"
+      "to_address": "Deutsches Forschungszentrum für Künstliche Intelligenz GmbH, Trippstadter Str. 122",
+      "to_zip": "67663",
+      "to_city": "Kaiserslautern"
     }
   }
 }
