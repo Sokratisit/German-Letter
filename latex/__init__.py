@@ -2,10 +2,14 @@ import re
 import shutil
 import subprocess
 from datetime import datetime
+import locale
+from functools import partial
 from pathlib import Path
 
 import send2trash
 from jinja2 import Environment, FileSystemLoader
+
+locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
 
 
 def render_template(template_name: str, output_path: Path, context: dict) -> None:
@@ -157,7 +161,7 @@ def move_files(src_dir: Path, dest_dir: Path, patterns: list[str]) -> None:
         for file in src_dir.glob(pattern):
             dest_path = dest_dir / file.name
             shutil.move(str(file), str(dest_path))
-            print(f"Moved: {file} -> {dest_path}")
+            print(f"Verschoben: {file} -> {dest_path}")
 
 
 def trash_files(src_dir: Path, extensions: list[str] | None = None) -> None:
@@ -174,7 +178,7 @@ def trash_files(src_dir: Path, extensions: list[str] | None = None) -> None:
     for file in src_dir.iterdir():
         if file.suffix in extensions:
             send2trash.send2trash(str(file))
-            print(f"Trashed: {file}")
+            print(f"Gelöscht: {file}")
 
 
 def clean_latex_files(latex_dir: Path, extensions: list[str] | None = None) -> None:
@@ -221,6 +225,7 @@ def main(
         from_mobile_phone: str | None = None,
         from_email: str | None = None,
         my_ref: str | None = None,
+        your_ref: str | None = None,
         subject: str | None = None,
         back_address: str | None = None,
         place: str | None = None,
@@ -233,7 +238,7 @@ def main(
 
     :param from_name: Full name of the sender.
     :param to_name: Full name of the recipient.
-    :param to_address: Full address of the recipient, including name.
+    :param to_address: Street address of the recipient.
     :param to_zip: ZIP code of the recipient.
     :param to_city: City of the recipient.
     :param opening: Letter's opening (e.g., 'Dear').
@@ -247,6 +252,7 @@ def main(
     :param from_mobile_phone: Optional sender's mobile phone number.
     :param from_email: Optional sender's email address.
     :param my_ref: Optional reference number of the sender.
+    :param your_ref: Optional reference number of the recipient.
     :param subject: Optional subject of the letter.
     :param back_address: Optional back-address; auto-generated if not provided.
     :param place: Optional place to include in the date.
@@ -257,7 +263,7 @@ def main(
     """
     # Directories
     output_dir = Path('output')  # Temporary directory for the generated files
-    user_path = Path.home()
+    user_path = Path('D:/Users/Admin')  # Path to the user's home directory)
     documents_path = user_path / 'Documents'
     letters_dir = documents_path / 'Letter' # Directory for the final PDFs
     latex_dir = letters_dir / 'LaTeX'  # Directory for the LaTeX files
@@ -275,19 +281,18 @@ def main(
         from_address += '\n' + ', '.join(f'{key}:\\quad{value}' for key, value in additional_info.items())
 
     # Format addresses for LaTeX
-    to_address += ', '.join([to_zip, to_city])
+    to_address += f' \\\\ {to_zip} {to_city}' if to_zip and to_city else ''
     formatted_from_address = format_address_for_latex(address=from_address) if from_address else None
     formatted_recipient_address = format_address_for_latex(address=to_address, name=to_name)
 
     # Generate the date if not provided
     if not date:
         now = datetime.now()
-        date = now.strftime('%d.%m.%Y')  # Format date as DD.MM.YYYY
+        date = now.strftime('%#d. %B %Y')
     formatted_date = f'{place}, {date}' if place else date
 
     # Generate a filename if not provided
-    if not filename:
-        filename = generate_filename(to_name)
+    filename = generate_filename(to_name) if not filename else generate_filename(filename)
 
     # Define the output paths
     output_tex_path = output_dir / f'{filename}.tex'
@@ -302,6 +307,7 @@ def main(
         'from_mobile_phone': from_mobile_phone,
         'from_email': from_email,
         'my_ref': my_ref,
+        'yourref': your_ref,
         'subject': subject,
         'to_name': to_name,
         'to_address': formatted_recipient_address,
@@ -334,3 +340,13 @@ def main(
     except Exception as e:
         print(f"Error occurred: {e}")
         print(f"Files left in: {output_dir} for debugging.")
+
+
+albert_letter = partial(
+    main,
+    from_name='Albert Marks',
+    from_address='Stammheimer Str. 94',
+    from_zip='50735',
+    from_city='Köln',
+    place='Köln',
+)
