@@ -1,47 +1,57 @@
 from nicegui import ui
-from pathlib import Path
-from __init__ import albert_letter  # Import your letter generation function
-
+import latex  # Import your existing LaTeX handling functions
 
 def generate_letter():
-    """Generate a letter PDF using the form input and display a download link."""
-    output_path = Path("Documents/Letter")
-    output_path.mkdir(parents=True, exist_ok=True)
+    context = {
+        "from_name": from_name.value,
+        "from_address": from_address.value,
+        "from_zip": from_zip_code.value,
+        "from_city": from_city.value,
+        "place": from_city.value,
+        "from_phone": from_phone.value,
+        "from_email": from_email.value,
+        "my_ref": my_ref.value,
+        "your_ref": your_ref.value,
+        "to_name": to_name.value,
+        "to_address": to_address.value,
+        "to_zip": to_zip.value,
+        "to_city": to_city.value,
+        "opening": opening.value,
+        "body": body.value,
+        # "closing": closing.value,
+        # "date": date.value,
+    }
+    if closing.value:
+        context["closing"] = closing.value
+    if date.value:
+        context["date"] = date.value
 
-    albert_letter(
-        to_name=name_input.value,
-        to_address=address_input.value,
-        to_zip=zip_input.value,
-        to_city=city_input.value,
-        opening=opening_input.value,
-        body=body_input.value,
-        closing=closing_input.value,
-        subject=subject_input.value,
-    )
+    try:
+        latex.main(**context)  # Call the function that renders LaTeX and generates the PDF
+        ui.notify("PDF successfully generated!", type="positive")
+    except Exception as e:
+        ui.notify(f"Error: {str(e)}", type="negative")
 
-    pdf_path = output_path / f"{name_input.value}.pdf"
-    pdf_link.set_text(f"Download PDF: {pdf_path}")
-    pdf_link.set_visibility(True)
+ui.label("Letter Generator").classes("text-2xl font-bold mb-4")
 
+with ui.column().classes("w-full max-w-lg"):
+    from_name = ui.input("Sender Name").classes("w-full")
+    from_address = ui.input("Sender Address").classes("w-full")
+    from_zip_code = ui.input("Sender ZIP Code").classes("w-full")
+    from_city = ui.input("Sender City").classes("w-full")
+    from_phone = ui.input("Sender Phone").classes("w-full")
+    from_email = ui.input("Sender Email").classes("w-full")
+    my_ref = ui.input("My Reference").classes("w-full")
+    your_ref = ui.input("Your Reference").classes("w-full")  # Correct name
 
-# UI Components
-ui.label("Letter Generator").classes("text-2xl")
+    to_name = ui.input("Recipient Name").classes("w-full")
+    to_address = ui.input("Recipient Address").classes("w-full")
+    to_zip = ui.input("Recipient ZIP Code").classes("w-full")
+    to_city = ui.input("Recipient City").classes("w-full")
 
-with ui.row():
-    name_input = ui.input("Recipient Name").classes("w-1/2")
-    address_input = ui.input("Street and House Number").classes("w-1/2")
+    opening = ui.input("Opening (e.g., 'Dear Mr. Smith')").classes("w-full")
+    body = ui.textarea("Body").classes("w-full")
+    closing = ui.input("Closing (e.g., 'Sincerely')").classes("w-full")
+    date = ui.input("Date (Leave blank for today)").classes("w-full")
 
-with ui.row():
-    zip_input = ui.input("ZIP Code").classes("w-1/3")
-    city_input = ui.input("City").classes("w-2/3")
-
-subject_input = ui.input("Subject").classes("w-full")
-opening_input = ui.input("Opening (e.g., Dear Sir/Madam)").classes("w-full")
-body_input = ui.textarea("Body of the Letter").classes("w-full h-40")
-closing_input = ui.input("Closing (e.g., Sincerely)").classes("w-full")
-
-ui.button("Generate PDF", on_click=generate_letter)
-
-pdf_link = ui.label("").classes("text-blue-500").set_visibility(False)
-
-ui.run()
+    ui.button("Generate Letter", on_click=generate_letter).classes("mt-4")

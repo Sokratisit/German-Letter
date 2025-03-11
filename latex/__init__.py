@@ -307,7 +307,7 @@ def main(
         'from_mobile_phone': from_mobile_phone,
         'from_email': from_email,
         'my_ref': my_ref,
-        'yourref': your_ref,
+        'your_ref': your_ref,
         'subject': subject,
         'to_name': to_name,
         'to_address': formatted_recipient_address,
