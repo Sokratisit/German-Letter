@@ -20,4 +20,4 @@ if __name__ == '__main__':
 
     pass
 
-ui.run(title="Letter Generator", port=8080)
+ui.run(title="Brief-Generator", port=8080)

@@ -12,7 +12,7 @@
         \\ {{- from_zip_code }} {{ from_city -}}
     {%- endif %}}
 {%- endif %}
-{% if my_ref %}\setkomavar{myref}{\raggedright {{- my_ref -}} }{% endif %}
+{% if my_ref %}\setkomavar{myref}{\raggedright {{ my_ref -}} }{% endif %}
 {% if from_phone %}\setkomavar{fromphone}{ {{- from_phone -}} }\n\KOMAoptions{fromphone}{% endif %}
 {% if phone_separator %}\setkomavar{phoneseparator}{ {{- phone_separator -}} }{% endif %}
 {% if from_email %}\setkomavar{fromemail}{ {{- from_email -}} }\n\KOMAoptions{fromemail}{% endif %}
