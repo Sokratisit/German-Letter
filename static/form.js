@@ -140,9 +140,9 @@
         );
         setFieldValue("closing", "Mit freundlichen Grüßen");
         setFieldValue("ps", "Bitte bestätigen Sie den Erhalt.");
-        setFieldValue("cc_separator", "Verteiler");
+        setFieldValue("cc_separator", ": ");
         setFieldValue("cc", "Frau Beispiel\nAblage");
-        setFieldValue("encl_separator", "Anlagen");
+        setFieldValue("encl_separator", ": ");
         setFieldValue("encl", "Vertrag\nRechnungskopie");
 
         setFieldValue("place", "Köln");

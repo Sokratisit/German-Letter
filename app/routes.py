@@ -1,21 +1,20 @@
 from __future__ import annotations
 
-import os
 from datetime import date
+from io import BytesIO
 from pathlib import Path
 
 from flask import (
     Blueprint,
     abort,
     current_app,
-    redirect,
     render_template,
     request,
+    send_file,
     send_from_directory,
-    url_for,
 )
 
-from .latex import LatexBuildError, generate_letter_pdf
+from .latex import LatexBuildError, render_letter_pdf
 from .validation import normalize_form_input, validate_letter_form
 
 bp = Blueprint("main", __name__)
@@ -50,9 +49,8 @@ def generate() -> tuple[str, int] | str:
         )
 
     try:
-        pdf_path = generate_letter_pdf(
+        filename, pdf_bytes = render_letter_pdf(
             validated,
-            generated_dir=Path(current_app.config["GENERATED_DIR"]),
             pdflatex_bin=current_app.config["PDFLATEX_BIN"],
         )
     except LatexBuildError as exc:
@@ -68,12 +66,11 @@ def generate() -> tuple[str, int] | str:
             500,
         )
 
-    _open_with_default_app(pdf_path)
-    return redirect(
-        url_for(
-            "main.index",
-            success=f"Der Brief wurde erstellt: {pdf_path.name}",
-        )
+    return send_file(
+        BytesIO(pdf_bytes),
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=filename,
     )
 
 
@@ -89,10 +86,3 @@ def download_generated(filename: str):
         as_attachment=True,
         download_name=safe_name,
     )
-
-
-def _open_with_default_app(path: Path) -> None:
-    try:
-        os.startfile(path)  # type: ignore[attr-defined]
-    except OSError:
-        current_app.logger.exception("Opening generated PDF failed")

@@ -248,13 +248,13 @@
 
             <div class="field-row field-row-2">
                 <div class="field-group">
-                    <label for="cc_separator">Verteiler-Titel</label>
-                    <input id="cc_separator" name="cc_separator" type="text" value="{{ form_data.get('cc_separator', 'Verteiler') }}">
+                    <label for="cc_separator">Verteiler-Trennzeichen</label>
+                    <input id="cc_separator" name="cc_separator" type="text" value="{{ form_data.get('cc_separator', ': ') }}">
                     {% if errors.get('cc_separator') %}<p class="error">{{ errors['cc_separator'] }}</p>{% endif %}
                 </div>
                 <div class="field-group">
-                    <label for="encl_separator">Anlagen-Titel</label>
-                    <input id="encl_separator" name="encl_separator" type="text" value="{{ form_data.get('encl_separator', 'Anlagen') }}">
+                    <label for="encl_separator">Anlagen-Trennzeichen</label>
+                    <input id="encl_separator" name="encl_separator" type="text" value="{{ form_data.get('encl_separator', ': ') }}">
                     {% if errors.get('encl_separator') %}<p class="error">{{ errors['encl_separator'] }}</p>{% endif %}
                 </div>
             </div>

@@ -190,9 +190,16 @@ def validate_letter_form(
 
 
 def normalize_form_input(form: Mapping[str, str]) -> dict[str, str]:
+    formatting_fields = {
+        "sender_backaddress_separator",
+        "subject_separator",
+        "cc_separator",
+        "encl_separator",
+        "place_separator",
+    }
     normalized: dict[str, str] = {}
     for key, value in form.items():
-        normalized[key] = value if key == "date_iso" else value.strip()
+        normalized[key] = value if key == "date_iso" or key in formatting_fields else value.strip()
     return normalized
 
 

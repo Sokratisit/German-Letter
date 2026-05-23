@@ -50,9 +50,9 @@ def _letter_data() -> LetterFormData:
         closing="Mit freundlichen Grüßen",
         ps="Bitte melden Sie sich kurzfristig.",
         cc="Ablage\nVertrieb",
-        cc_separator="Verteiler",
+        cc_separator=": ",
         encl="Vertrag\nRechnung",
-        encl_separator="Anlagen",
+        encl_separator=": ",
         place="Berlin",
         place_separator=", ",
         date_iso=date(2026, 4, 24),
@@ -64,7 +64,7 @@ def test_template_contains_expected_scrlttr2_sections() -> None:
     tex = build_letter_tex(_letter_data())
     assert r"\documentclass[paper=a4,fontsize=11pt]{scrlttr2}" in tex
     assert (
-        r"\KOMAoptions{subject=titled,parskip=half,fromphone=true,frommobilephone=true,fromfax=true,fromemail=true,fromurl=true,fromlogo=false}"
+        r"\KOMAoptions{parskip=half,subject=beforeopening,subject=titled,fromphone=true,frommobilephone=true,fromfax=true,fromemail=true,fromurl=true,fromlogo=false}"
         in tex
     )
     assert r"\setlength{\parindent}{0pt}" in tex
@@ -72,14 +72,20 @@ def test_template_contains_expected_scrlttr2_sections() -> None:
     assert r"\setkomavar{fromaddress}{2. Etage\\ Musterweg 1\\ 12345 Berlin}" in tex
     assert r"\setkomavar{backaddressseparator}{, }" in tex
     assert r"\setkomavar{backaddress}{Dr. M. Mustermann, 2. Etage, Musterweg 1, 12345 Berlin}" in tex
+    assert r"\setkomavar*{fromphone}{Telefon: }" in tex
+    assert r"\setkomavar*{frommobilephone}{Mobiltelefon: }" in tex
+    assert r"\setkomavar*{fromfax}{Fax: }" in tex
+    assert r"\setkomavar*{fromemail}{E-Mail: }" in tex
+    assert r"\setkomavar*{fromurl}{URL: }" in tex
     assert r"\setkomavar{fromphone}{030 123456}" in tex
     assert r"\setkomavar{frommobilephone}{0171 2345678}" in tex
     assert r"\setkomavar{fromfax}{030 654321}" in tex
     assert r"\setkomavar{fromemail}{max@example.com}" in tex
     assert r"\setkomavar{fromurl}{https://example.com}" in tex
     assert r"\setkomavar{frombank}{IBAN DE21 87654321 13456789\\ BIC TESTDEFFXXX}" in tex
-    assert r"\setkomavar{title}{Mahnung}" in tex
+    assert r"\setkomavar*{subject}{Betreff: }" in tex
     assert r"\setkomavar{subject}{Test \& Anfrage}" in tex
+    assert r"\setkomavar{title}{Mahnung}" in tex
     assert r"\setkomavar{subjectseparator}{: }" in tex
     assert r"\setkomavar*{yourref}{Ihr Zeichen}" in tex
     assert r"\setkomavar{yourref}{HB-7}" in tex
@@ -91,9 +97,9 @@ def test_template_contains_expected_scrlttr2_sections() -> None:
     assert r"\setkomavar{customer}{4711}" in tex
     assert r"\setkomavar*{invoice}{Rechnungsnummer}" in tex
     assert r"\setkomavar{invoice}{R-77}" in tex
-    assert r"\setkomavar{place}{Berlin}" in tex
+    assert r"\setkomavar{place}{}" in tex
     assert r"\setkomavar{placeseparator}{, }" in tex
-    assert r"\setkomavar{date}{24.4.2026}" in tex
+    assert r"\setkomavar{date}{Berlin, 24.4.2026}" in tex
     assert r"\setkomavar*{date}{Datum}" in tex
     assert r"\setkomavar{toname}{Prof. Erika Beispiel}" in tex
     assert (
@@ -102,8 +108,10 @@ def test_template_contains_expected_scrlttr2_sections() -> None:
     )
     assert r"\opening{Sehr geehrte Frau Beispiel,}" in tex
     assert r"\ps Bitte melden Sie sich kurzfristig." in tex
-    assert r"\encl{Vertrag\\ Rechnung}" in tex
-    assert r"\cc{Ablage\\ Vertrieb}" in tex
+    assert r"\par AnlagenVertrag\\ Rechnung" not in tex
+    assert r"\par VerteilerAblage\\ Vertrieb" not in tex
+    assert r"\par Anlagen: Vertrag\\ Rechnung" in tex
+    assert r"\par Verteiler: Ablage\\ Vertrieb" in tex
 
 
 def test_format_german_date() -> None:

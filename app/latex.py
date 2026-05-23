@@ -106,13 +106,14 @@ def build_letter_tex(data: LetterFormData) -> str:
     body = _latex_lines(data.body)
     body_block = body if body else escape_latex(data.body)
     sender_bank = _latex_lines(data.sender_bank)
-    cc = _latex_lines(data.cc)
-    encl = _latex_lines(data.encl)
+    subject_separator = data.subject_separator or ": "
+    place_separator = data.place_separator or ", "
 
     koma_options = ",".join(
         (
-            "subject=titled",
             "parskip=half",
+            "subject=beforeopening",
+            "subject=titled",
             f"fromphone={_option_bool(data.sender_phone)}",
             f"frommobilephone={_option_bool(data.sender_mobile_phone)}",
             f"fromfax={_option_bool(data.sender_fax)}",
@@ -131,9 +132,15 @@ def build_letter_tex(data: LetterFormData) -> str:
         rf"\setkomavar{{backaddressseparator}}{{{escape_latex(data.sender_backaddress_separator or ', ')}}}",
         rf"\setkomavar{{backaddress}}{{{_backaddress_text(data)}}}",
         rf"\setkomavar{{signature}}{{{escape_latex(data.signature)}}}",
+        r"\setkomavar*{fromphone}{Telefon: }",
+        r"\setkomavar*{frommobilephone}{Mobiltelefon: }",
+        r"\setkomavar*{fromfax}{Fax: }",
+        r"\setkomavar*{fromemail}{E-Mail: }",
+        r"\setkomavar*{fromurl}{URL: }",
+        r"\setkomavar*{subject}{Betreff: }",
         rf"\setkomavar{{subject}}{{{escape_latex(data.subject)}}}",
         rf"\setkomavar{{title}}{{{escape_latex(data.letter_title)}}}",
-        rf"\setkomavar{{subjectseparator}}{{{escape_latex(data.subject_separator or ': ')}}}",
+        rf"\setkomavar{{subjectseparator}}{{{escape_latex(subject_separator)}}}",
         r"\setkomavar*{yourref}{Ihr Zeichen}",
         rf"\setkomavar{{yourref}}{{{escape_latex(data.your_reference)}}}",
         r"\setkomavar*{yourmail}{Ihr Schreiben vom}",
@@ -144,9 +151,9 @@ def build_letter_tex(data: LetterFormData) -> str:
         rf"\setkomavar{{customer}}{{{escape_latex(data.customer)}}}",
         r"\setkomavar*{invoice}{Rechnungsnummer}",
         rf"\setkomavar{{invoice}}{{{escape_latex(data.invoice)}}}",
-        rf"\setkomavar{{place}}{{{escape_latex(data.place)}}}",
-        rf"\setkomavar{{placeseparator}}{{{escape_latex(data.place_separator or ', ')}}}",
-        rf"\setkomavar{{date}}{{{format_german_date(data.date_iso)}}}",
+        r"\setkomavar{place}{}",
+        rf"\setkomavar{{placeseparator}}{{{escape_latex(place_separator)}}}",
+        rf"\setkomavar{{date}}{{{escape_latex(_date_line(data.place, place_separator, data.date_iso))}}}",
         r"\setkomavar*{date}{Datum}",
         rf"\setkomavar{{toname}}{{{escape_latex(_recipient_name(data))}}}",
         rf"\setkomavar{{toaddress}}{{{recipient_line}}}",
@@ -156,8 +163,6 @@ def build_letter_tex(data: LetterFormData) -> str:
         rf"\setkomavar{{fromemail}}{{{escape_latex(data.sender_email)}}}",
         rf"\setkomavar{{fromurl}}{{{escape_latex(data.sender_url)}}}",
         rf"\setkomavar{{frombank}}{{{sender_bank}}}",
-        rf"\setkomavar{{ccseparator}}{{{escape_latex(data.cc_separator or 'Verteiler')}}}",
-        rf"\setkomavar{{enclseparator}}{{{escape_latex(data.encl_separator or 'Anlagen')}}}",
     ]
 
     if data.sender_logo:
@@ -175,10 +180,10 @@ def build_letter_tex(data: LetterFormData) -> str:
 
     if data.ps:
         lines.append(r"\ps " + escape_latex(data.ps))
-    if encl:
-        lines.append(r"\encl{" + encl + "}")
-    if cc:
-        lines.append(r"\cc{" + cc + "}")
+    if data.encl:
+        lines.append(_labeled_block("Anlagen", data.encl_separator, data.encl))
+    if data.cc:
+        lines.append(_labeled_block("Verteiler", data.cc_separator, data.cc))
 
     lines.extend((r"\end{letter}", r"\end{document}"))
     return "\n".join(lines) + "\n"
@@ -208,13 +213,8 @@ def _sanitize_filename_component(value: str) -> str:
     return sanitized.rstrip(".") or "Empfänger"
 
 
-def generate_letter_pdf(
-    data: LetterFormData, *, generated_dir: Path, pdflatex_bin: str = "pdflatex"
-) -> Path:
-    generated_dir.mkdir(parents=True, exist_ok=True)
+def render_letter_pdf(data: LetterFormData, *, pdflatex_bin: str = "pdflatex") -> tuple[str, bytes]:
     output_filename = build_output_filename(data)
-    output_path = generated_dir / output_filename
-
     with tempfile.TemporaryDirectory(prefix="letter-app-") as tmp_name:
         tmp_dir = Path(tmp_name)
         stem = tmp_dir / "letter"
@@ -240,12 +240,45 @@ def generate_letter_pdf(
         pdf_path = stem.with_suffix(".pdf")
         if not pdf_path.exists():
             raise LatexCompileError("Compilation reported success but no PDF was produced.")
-
-        output_path.write_bytes(pdf_path.read_bytes())
+        pdf_bytes = pdf_path.read_bytes()
         _cleanup_auxiliary_files(stem)
 
+    return output_filename, pdf_bytes
+
+
+def generate_letter_pdf(
+    data: LetterFormData, *, generated_dir: Path, pdflatex_bin: str = "pdflatex"
+) -> Path:
+    generated_dir.mkdir(parents=True, exist_ok=True)
+    output_filename, pdf_bytes = render_letter_pdf(data, pdflatex_bin=pdflatex_bin)
+    output_path = generated_dir / output_filename
+    output_path.write_bytes(pdf_bytes)
     return output_path
 
 
 class LatexCompileError(LatexBuildError):
     pass
+
+
+def _separator_label(value: str, fallback: str) -> str:
+    text = value if value else fallback
+    return text if text.endswith(" ") else f"{text} "
+
+
+def _date_line(place: str, separator: str, value: date) -> str:
+    date_text = format_german_date(value)
+    if not place:
+        return date_text
+    return f"{place}{separator}{date_text}"
+
+
+def _labeled_block(label: str, separator: str, content: str) -> str:
+    content_text = _latex_lines(content)
+    if not content_text:
+        return ""
+    return rf"\par {escape_latex(_label_prefix(label, separator))}{content_text}"
+
+
+def _label_prefix(label: str, separator: str) -> str:
+    effective_separator = separator if separator else ": "
+    return f"{label}{effective_separator}"
