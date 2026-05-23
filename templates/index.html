@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Brief erstellen</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script defer src="{{ url_for('static', filename='form.js') }}"></script>
 </head>
@@ -20,11 +21,6 @@
     {% endif %}
 
     <form id="letter-form" method="post" action="{{ url_for('main.generate') }}" novalidate autocomplete="off">
-        <div class="toolbar">
-            <button type="button" id="fill-albert-marks">Albert Marks einfügen</button>
-            <button type="button" id="fill-sample-letter">Testdaten einfügen</button>
-        </div>
-
         <section>
             <h2>Absender</h2>
 
