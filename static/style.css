@@ -37,12 +37,6 @@ form {
     gap: 1.25rem;
 }
 
-.toolbar {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
 section {
     padding: 1rem;
     border: 1px solid var(--border);
@@ -85,6 +79,20 @@ label {
     margin-top: 0.75rem;
     margin-bottom: 0.25rem;
     font-weight: 600;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+.checkbox-label input {
+    width: auto;
+    margin: 0;
 }
 
 .section-note {

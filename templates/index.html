@@ -126,6 +126,11 @@
             <label for="sender_backaddress_separator">Rücksendeadress-Trennzeichen</label>
             <input id="sender_backaddress_separator" name="sender_backaddress_separator" type="text" value="{{ form_data.get('sender_backaddress_separator', ', ') }}">
             {% if errors.get('sender_backaddress_separator') %}<p class="error">{{ errors['sender_backaddress_separator'] }}</p>{% endif %}
+
+            <label class="checkbox-label">
+                <input id="save_sender" name="save_sender" type="checkbox" {% if form_data.get('save_sender') %}checked{% endif %}>
+                Speichern
+            </label>
         </section>
 
         <section>
@@ -204,6 +209,11 @@
                     {% if errors.get('invoice') %}<p class="error">{{ errors['invoice'] }}</p>{% endif %}
                 </div>
             </div>
+
+            <label class="checkbox-label">
+                <input id="save_recipient" name="save_recipient" type="checkbox" {% if form_data.get('save_recipient') %}checked{% endif %}>
+                Speichern
+            </label>
         </section>
 
         <section>

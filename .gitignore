@@ -1,9 +1,12 @@
 .venv/
 .uv-cache/
 .miktex/
+.idea/
 __pycache__/
 .pytest_cache/
+.pytest-tmp/
 *.pyc
+*.iml
 build/
 .brief-tmp/
 dist/

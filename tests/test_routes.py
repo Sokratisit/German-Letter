@@ -1,0 +1,101 @@
+import json
+
+from app import create_app
+
+
+def _valid_payload() -> dict[str, str]:
+    return {
+        "sender_last_name": "Mustermann",
+        "sender_first_name": "Max",
+        "sender_title": "Dr.",
+        "sender_extra": "2. Etage",
+        "sender_street": "Musterweg",
+        "sender_street_number": "1",
+        "sender_postal_code": "12345",
+        "sender_city": "Berlin",
+        "sender_phone": "030 123456",
+        "sender_mobile_phone": "0171 2345678",
+        "sender_fax": "030 654321",
+        "sender_email": "max@example.com",
+        "sender_url": "https://example.com",
+        "sender_bank": "IBAN DE21 87654321 13456789",
+        "sender_logo": "",
+        "sender_backaddress_separator": ", ",
+        "my_reference": "MM-2026-04",
+        "signature": "Dr. Max Mustermann",
+        "recipient_last_name": "Beispiel",
+        "recipient_first_name": "Erika",
+        "recipient_title": "",
+        "recipient_extra": "Personalabteilung",
+        "recipient_street": "Firmenstraße",
+        "recipient_street_number": "4",
+        "recipient_postal_code": "98765",
+        "recipient_city": "Hamburg",
+        "your_reference": "BG-77",
+        "your_mail": "01.04.2026",
+        "customer": "4711",
+        "invoice": "R-99",
+        "letter_title": "Mahnung",
+        "subject": "Kündigung",
+        "subject_separator": ": ",
+        "opening": "Sehr geehrte Frau Beispiel,",
+        "body": "Hiermit kündige ich den Vertrag fristgerecht.",
+        "closing": "Mit freundlichen Grüßen",
+        "ps": "Bitte bestätigen Sie den Eingang.",
+        "cc": "Ablage",
+        "cc_separator": "Verteiler",
+        "encl": "Vertrag",
+        "encl_separator": "Anlagen",
+        "place": "Berlin",
+        "place_separator": ", ",
+        "date_iso": "2026-04-24",
+        "filename_addressee": "Beispiel",
+    }
+
+
+def test_index_prefills_sender_and_recipient_from_cookies() -> None:
+    app = create_app()
+    client = app.test_client()
+    client.set_cookie("letter_sender", json.dumps({"sender_last_name": "Muster", "sender_city": "Köln"}))
+    client.set_cookie("letter_recipient", json.dumps({"recipient_last_name": "Beispiel", "customer": "4711"}))
+
+    response = client.get("/")
+
+    body = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert 'value="Muster"' in body
+    assert 'value="Köln"' in body
+    assert 'value="Beispiel"' in body
+    assert 'value="4711"' in body
+    assert 'id="save_sender" name="save_sender" type="checkbox" checked' in body
+    assert 'id="save_recipient" name="save_recipient" type="checkbox" checked' in body
+
+
+def test_generate_sets_sender_and_recipient_cookies(monkeypatch) -> None:
+    app = create_app()
+    client = app.test_client()
+
+    monkeypatch.setattr("app.routes.render_letter_pdf", lambda *_args, **_kwargs: ("2026-04-24 Beispiel.pdf", b"%PDF-1.4"))
+    payload = _valid_payload() | {"save_sender": "on", "save_recipient": "on"}
+
+    response = client.post("/generate", data=payload)
+
+    set_cookies = response.headers.getlist("Set-Cookie")
+    assert response.status_code == 200
+    assert response.mimetype == "application/pdf"
+    assert any(cookie.startswith("letter_sender=") for cookie in set_cookies)
+    assert any(cookie.startswith("letter_recipient=") for cookie in set_cookies)
+
+
+def test_generate_deletes_unchecked_cookies(monkeypatch) -> None:
+    app = create_app()
+    client = app.test_client()
+    client.set_cookie("letter_sender", json.dumps({"sender_last_name": "Alt"}))
+    client.set_cookie("letter_recipient", json.dumps({"recipient_last_name": "Alt"}))
+
+    monkeypatch.setattr("app.routes.render_letter_pdf", lambda *_args, **_kwargs: ("2026-04-24 Beispiel.pdf", b"%PDF-1.4"))
+    response = client.post("/generate", data=_valid_payload())
+
+    set_cookies = response.headers.getlist("Set-Cookie")
+    assert any(cookie.startswith("letter_sender=;") for cookie in set_cookies)
+    assert any(cookie.startswith("letter_recipient=;") for cookie in set_cookies)
