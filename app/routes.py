@@ -56,11 +56,59 @@ RECIPIENT_FIELDS = (
     "customer",
     "invoice",
 )
+QUERY_PARAM_MAP = {
+    "from_name_last": "sender_last_name",
+    "from_name_first": "sender_first_name",
+    "from_name_title": "sender_title",
+    "fromaddress_extra": "sender_extra",
+    "fromaddress_street": "sender_street",
+    "fromaddress_number": "sender_street_number",
+    "fromaddress_postalcode": "sender_postal_code",
+    "fromaddress_city": "sender_city",
+    "fromphone": "sender_phone",
+    "frommobilephone": "sender_mobile_phone",
+    "fromfax": "sender_fax",
+    "fromemail": "sender_email",
+    "fromurl": "sender_url",
+    "frombank": "sender_bank",
+    "fromlogo": "sender_logo",
+    "backaddressseparator": "sender_backaddress_separator",
+    "myref": "my_reference",
+    "signature": "signature",
+    "to_name_last": "recipient_last_name",
+    "to_name_first": "recipient_first_name",
+    "to_name_title": "recipient_title",
+    "toaddress_extra": "recipient_extra",
+    "toaddress_street": "recipient_street",
+    "toaddress_number": "recipient_street_number",
+    "toaddress_postalcode": "recipient_postal_code",
+    "toaddress_city": "recipient_city",
+    "yourref": "your_reference",
+    "yourmail": "your_mail",
+    "customer": "customer",
+    "invoice": "invoice",
+    "title": "letter_title",
+    "subject": "subject",
+    "subjectseparator": "subject_separator",
+    "opening": "opening",
+    "body": "body",
+    "closing": "closing",
+    "ps": "ps",
+    "cc": "cc",
+    "ccseparator": "cc_separator",
+    "encl": "encl",
+    "enclseparator": "encl_separator",
+    "place": "place",
+    "placeseparator": "place_separator",
+    "date": "date_iso",
+    "filenameaddressee": "filename_addressee",
+}
 
 
 @bp.get("/")
 def index() -> str:
     form_data = _form_data_from_cookies()
+    form_data.update(_form_data_from_query())
     return render_template(
         "index.html",
         errors={},
@@ -149,6 +197,15 @@ def _form_data_from_cookies() -> dict[str, str]:
     form_data["save_sender"] = "on" if request.cookies.get(SENDER_COOKIE_NAME) else ""
     form_data["save_recipient"] = "on" if request.cookies.get(RECIPIENT_COOKIE_NAME) else ""
     return form_data
+
+
+def _form_data_from_query() -> dict[str, str]:
+    query_data: dict[str, str] = {}
+    for query_key, form_key in QUERY_PARAM_MAP.items():
+        value = request.args.get(query_key)
+        if value is not None:
+            query_data[form_key] = value
+    return query_data
 
 
 def _load_cookie_data(cookie_name: str, allowed_fields: tuple[str, ...]) -> dict[str, str]:

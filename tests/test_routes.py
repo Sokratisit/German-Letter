@@ -99,3 +99,24 @@ def test_generate_deletes_unchecked_cookies(monkeypatch) -> None:
     set_cookies = response.headers.getlist("Set-Cookie")
     assert any(cookie.startswith("letter_sender=;") for cookie in set_cookies)
     assert any(cookie.startswith("letter_recipient=;") for cookie in set_cookies)
+
+
+def test_index_prefers_query_parameters_over_cookies_per_field() -> None:
+    app = create_app()
+    client = app.test_client()
+    client.set_cookie("letter_sender", json.dumps({"sender_last_name": "CookieName", "sender_city": "Köln"}))
+    client.set_cookie("letter_recipient", json.dumps({"recipient_last_name": "CookieRecipient", "recipient_city": "Hamburg"}))
+
+    response = client.get("/?from_name_last=QueryName&to_name_last=QueryRecipient&place=Berlin")
+
+    body = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert 'name="sender_last_name" type="text"' in body
+    assert 'value="QueryName"' in body
+    assert 'name="sender_city" type="text"' in body
+    assert 'value="Köln"' in body
+    assert 'name="recipient_last_name" type="text"' in body
+    assert 'value="QueryRecipient"' in body
+    assert 'name="recipient_city" type="text"' in body
+    assert 'value="Hamburg"' in body
+    assert 'name="place" type="text" value="Berlin"' in body
