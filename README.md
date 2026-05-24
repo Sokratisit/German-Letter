@@ -1,6 +1,6 @@
-# Brief
+# German Letter Generator
 
-`Brief` is a Flask web app for composing German letters and generating PDFs with LaTeX `scrlttr2`.
+German Letter Generator is a Flask web app for composing German letters and generating PDFs with LaTeX `scrlttr2`.
 
 It is intended as a practical letter-writing tool rather than a generic LaTeX editor. The form collects sender, recipient, subject, references, body text, closing, attachments, distribution list, and place/date information, then renders a finished PDF for download in the browser.
 
@@ -25,7 +25,7 @@ It is intended as a practical letter-writing tool rather than a generic LaTeX ed
 ## Project structure
 
 ```text
-Brief/
+project/
     main.py
     pyproject.toml
     README.md
@@ -69,6 +69,8 @@ Brief/
    ```bash
    uv run brief
    ```
+
+   The CLI command remains `brief`, because that is the current Python package entry point defined in `pyproject.toml`.
 
 4. Open:
 
