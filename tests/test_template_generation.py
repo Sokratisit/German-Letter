@@ -99,7 +99,7 @@ def test_template_contains_expected_scrlttr2_sections() -> None:
     assert r"\setkomavar{invoice}{R-77}" in tex
     assert r"\setkomavar{place}{}" in tex
     assert r"\setkomavar{placeseparator}{, }" in tex
-    assert r"\setkomavar{date}{Berlin, 24.4.2026}" in tex
+    assert r"\setkomavar{date}{Berlin,~24.4.2026}" in tex
     assert r"\setkomavar*{date}{Datum}" in tex
     assert r"\setkomavar{toname}{Prof. Erika Beispiel}" in tex
     assert (

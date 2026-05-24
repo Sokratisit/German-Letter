@@ -153,7 +153,7 @@ def build_letter_tex(data: LetterFormData) -> str:
         rf"\setkomavar{{invoice}}{{{escape_latex(data.invoice)}}}",
         r"\setkomavar{place}{}",
         rf"\setkomavar{{placeseparator}}{{{escape_latex(place_separator)}}}",
-        rf"\setkomavar{{date}}{{{escape_latex(_date_line(data.place, place_separator, data.date_iso))}}}",
+        rf"\setkomavar{{date}}{{{_date_line_latex(data.place, place_separator, data.date_iso)}}}",
         r"\setkomavar*{date}{Datum}",
         rf"\setkomavar{{toname}}{{{escape_latex(_recipient_name(data))}}}",
         rf"\setkomavar{{toaddress}}{{{recipient_line}}}",
@@ -272,6 +272,13 @@ def _date_line(place: str, separator: str, value: date) -> str:
     return f"{place}{separator}{date_text}"
 
 
+def _date_line_latex(place: str, separator: str, value: date) -> str:
+    date_text = escape_latex(format_german_date(value))
+    if not place:
+        return date_text
+    return f"{escape_latex(place)}{_latex_separator(separator)}{date_text}"
+
+
 def _labeled_block(label: str, separator: str, content: str) -> str:
     content_text = _latex_lines(content)
     if not content_text:
@@ -282,3 +289,14 @@ def _labeled_block(label: str, separator: str, content: str) -> str:
 def _label_prefix(label: str, separator: str) -> str:
     effective_separator = separator if separator else ": "
     return f"{label}{effective_separator}"
+
+
+def _latex_separator(separator: str) -> str:
+    text = separator or ""
+    parts: list[str] = []
+    for char in text:
+        if char == " ":
+            parts.append("~")
+        else:
+            parts.append(escape_latex(char))
+    return "".join(parts)
