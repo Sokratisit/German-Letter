@@ -266,7 +266,7 @@
                 </div>
                 <div class="field-group">
                     <label for="date_iso">Datum</label>
-                    <input id="date_iso" name="date_iso" type="date" value="{{ form_data.get('date_iso', today_iso) }}">
+                    <input class="highlighted-field" id="date_iso" name="date_iso" type="date" value="{{ form_data.get('date_iso', '') }}">
                     {% if errors.get('date_iso') %}<p class="error">{{ errors['date_iso'] }}</p>{% endif %}
                 </div>
             </div>
@@ -345,7 +345,7 @@
             <div class="field-row field-row-date-filename">
                 <div class="field-group field-date-short">
                     <label for="filename_date_hint">Datum</label>
-                    <input id="filename_date_hint" type="text" value="{{ form_data.get('date_iso', today_iso) }}" readonly>
+                    <input id="filename_date_hint" type="text" value="{{ form_data.get('date_iso', '') }}" readonly>
                 </div>
                 <div class="field-group field-grow">
                     <label for="filename_addressee">Empfänger</label>

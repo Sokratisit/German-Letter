@@ -3,16 +3,13 @@ from __future__ import annotations
 import json
 from datetime import date
 from io import BytesIO
-from pathlib import Path
 
 from flask import (
     Blueprint,
-    abort,
     current_app,
     render_template,
     request,
     send_file,
-    send_from_directory,
 )
 
 from .latex import LatexBuildError, render_letter_pdf
@@ -186,20 +183,6 @@ def generate() -> tuple[str, int] | str:
     )
     _apply_section_cookies(response, form_data)
     return response
-
-
-@bp.get("/generated/<path:filename>")
-def download_generated(filename: str):
-    safe_name = Path(filename).name
-    if safe_name != filename or not safe_name.endswith(".pdf"):
-        abort(404)
-
-    return send_from_directory(
-        current_app.config["GENERATED_DIR"],
-        safe_name,
-        as_attachment=True,
-        download_name=safe_name,
-    )
 
 
 def _form_data_from_cookies() -> dict[str, str]:

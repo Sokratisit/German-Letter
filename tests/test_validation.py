@@ -67,12 +67,14 @@ def test_validation_allows_empty_optional_content_fields() -> None:
     payload["subject"] = ""
     payload["your_mail"] = ""
     payload["cc"] = ""
+    payload["date_iso"] = ""
     data, errors = validate_letter_form(payload)
     assert data is not None
     assert errors == {}
     assert data.subject == ""
     assert data.your_mail == ""
     assert data.cc == ""
+    assert data.date_iso is None
 
 
 def test_validation_rejects_invalid_date() -> None:

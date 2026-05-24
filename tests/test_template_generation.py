@@ -140,6 +140,11 @@ def test_build_output_filename_uses_date_and_addressee() -> None:
     assert build_output_filename(_letter_data()) == "2026-04-24 Beispiel.pdf"
 
 
+def test_build_output_filename_omits_date_when_missing() -> None:
+    data = replace(_letter_data(), date_iso=None)
+    assert build_output_filename(data) == "Beispiel.pdf"
+
+
 def test_template_omits_extra_spaces_when_optional_name_parts_are_missing() -> None:
     data = replace(
         _letter_data(),
@@ -181,3 +186,9 @@ def test_empty_opening_uses_safe_placeholder() -> None:
     tex = build_letter_tex(data)
     assert r"\opening{" not in tex
     assert r"\par" in tex
+
+
+def test_template_omits_date_value_when_missing() -> None:
+    data = replace(_letter_data(), date_iso=None)
+    tex = build_letter_tex(data)
+    assert r"\setkomavar{date}{Berlin}" in tex

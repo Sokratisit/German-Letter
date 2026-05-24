@@ -222,6 +222,8 @@ def _cleanup_auxiliary_files(stem: Path) -> None:
 
 def build_output_filename(data: LetterFormData) -> str:
     addressee = _sanitize_filename_component(data.filename_addressee)
+    if data.date_iso is None:
+        return f"{addressee}.pdf"
     return f"{data.date_iso.isoformat()} {addressee}.pdf"
 
 
@@ -264,16 +266,6 @@ def render_letter_pdf(data: LetterFormData, *, pdflatex_bin: str = "pdflatex") -
     return output_filename, pdf_bytes
 
 
-def generate_letter_pdf(
-    data: LetterFormData, *, generated_dir: Path, pdflatex_bin: str = "pdflatex"
-) -> Path:
-    generated_dir.mkdir(parents=True, exist_ok=True)
-    output_filename, pdf_bytes = render_letter_pdf(data, pdflatex_bin=pdflatex_bin)
-    output_path = generated_dir / output_filename
-    output_path.write_bytes(pdf_bytes)
-    return output_path
-
-
 class LatexCompileError(LatexBuildError):
     pass
 
@@ -283,14 +275,9 @@ def _separator_label(value: str, fallback: str) -> str:
     return text if text.endswith(" ") else f"{text} "
 
 
-def _date_line(place: str, separator: str, value: date) -> str:
-    date_text = format_german_date(value)
-    if not place:
-        return date_text
-    return f"{place}{separator}{date_text}"
-
-
-def _date_line_latex(place: str, separator: str, value: date) -> str:
+def _date_line_latex(place: str, separator: str, value: date | None) -> str:
+    if value is None:
+        return escape_latex(place) if place else ""
     date_text = escape_latex(format_german_date(value))
     if not place:
         return date_text
@@ -318,4 +305,3 @@ def _latex_separator(separator: str) -> str:
         else:
             parts.append(escape_latex(char))
     return "".join(parts)
-

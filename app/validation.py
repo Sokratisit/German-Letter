@@ -109,7 +109,7 @@ class LetterFormData:
     encl_separator: str
     place: str
     place_separator: str
-    date_iso: date
+    date_iso: date | None
     filename_addressee: str
 
     @property
@@ -144,7 +144,7 @@ def validate_letter_form(
             errors["date_iso"] = "Datum muss im Format YYYY-MM-DD sein."
             parsed_date = today or date.today()
     else:
-        parsed_date = today or date.today()
+        parsed_date = None
 
     if errors:
         return None, errors

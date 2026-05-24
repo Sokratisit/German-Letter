@@ -8,7 +8,6 @@ def create_app(settings: AppSettings | None = None):
     from .routes import bp
 
     app_settings = settings or AppSettings.from_env()
-    app_settings.generated_dir.mkdir(parents=True, exist_ok=True)
 
     app = Flask(
         __name__,
@@ -17,7 +16,6 @@ def create_app(settings: AppSettings | None = None):
     )
     app.config.from_mapping(
         SECRET_KEY=app_settings.secret_key,
-        GENERATED_DIR=str(app_settings.generated_dir),
         PDFLATEX_BIN=app_settings.pdflatex_bin,
         MAX_CONTENT_LENGTH=app_settings.max_content_length,
     )
