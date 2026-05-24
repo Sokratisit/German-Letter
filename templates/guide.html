@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anleitung</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="container info-page">
+    <p><a class="subtle-link" href="{{ url_for('main.index') }}">Zurück zur Briefseite</a></p>
+    <h1>Anleitung</h1>
+
+    <section>
+        <h2>1. Daten eintragen</h2>
+        <p>Tragen Sie zuerst die Daten für Absender, Empfänger sowie die restlichen Briefangaben ein. Felder, die in den meisten Briefen benötigt werden, sind farblich hervorgehoben.</p>
+    </section>
+
+    <section>
+        <h2>2. Speichern wählen</h2>
+        <p>Entscheiden Sie, ob die Angaben aus Absender und/oder Empfänger für spätere Aufrufe im Browser gespeichert werden sollen. Setzen Sie dafür die jeweiligen <strong>Speichern</strong>-Häkchen.</p>
+    </section>
+
+    <section>
+        <h2>3. Haupttext schreiben</h2>
+        <p>Wählen Sie im Bereich Textformat, ob Sie Markdown oder LaTeX verwenden möchten. Schreiben Sie danach den Brieftext im großen Textfeld.</p>
+    </section>
+
+    <section>
+        <h2>4. PDF erzeugen</h2>
+        <p>Klicken Sie auf <strong>PDF erzeugen</strong>. Falls ein Fehler auftritt, erscheint oben auf der Seite eine Meldung.</p>
+    </section>
+</main>
+</body>
+</html>

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from typing import Mapping
+logger = logging.getLogger(__name__)
 
 MAX_LENGTHS: dict[str, int] = {
     "sender_last_name": 120,
@@ -45,7 +47,8 @@ MAX_LENGTHS: dict[str, int] = {
     "subject": 180,
     "subject_separator": 80,
     "opening": 180,
-    "body": 5000,
+    "body_mode": 20,
+    "body": 12000,
     "closing": 120,
     "ps": 500,
     "cc": 800,
@@ -100,6 +103,7 @@ class LetterFormData:
     subject: str
     subject_separator: str
     opening: str
+    body_mode: str
     body: str
     closing: str
     ps: str
@@ -126,6 +130,7 @@ class LetterFormData:
 def validate_letter_form(
     form: Mapping[str, str], *, today: date | None = None
 ) -> tuple[LetterFormData | None, dict[str, str]]:
+    logger.debug("validate_letter_form called")
     normalized_form = normalize_form_input(form)
     errors: dict[str, str] = {}
     cleaned: dict[str, str] = {}
@@ -138,15 +143,18 @@ def validate_letter_form(
 
     date_raw = normalized_form.get("date_iso", "")
     if date_raw:
-        try:
-            parsed_date = date.fromisoformat(date_raw)
-        except ValueError:
-            errors["date_iso"] = "Datum muss im Format YYYY-MM-DD sein."
-            parsed_date = today or date.today()
+        parsed_date = _parse_date_input(date_raw)
+        if parsed_date is None:
+            errors["date_iso"] = "Datum muss im Format TT.MM.JJJJ sein."
     else:
         parsed_date = None
 
     if errors:
+        return None, errors
+
+    body_mode = cleaned["body_mode"] or "markdown"
+    if body_mode not in {"markdown", "latex"}:
+        errors["body_mode"] = "Ungültiger Textmodus."
         return None, errors
 
     return (
@@ -191,6 +199,7 @@ def validate_letter_form(
             subject=cleaned["subject"],
             subject_separator=cleaned["subject_separator"],
             opening=cleaned["opening"],
+            body_mode=body_mode,
             body=cleaned["body"].replace("\r\n", "\n"),
             closing=cleaned["closing"],
             ps=cleaned["ps"],
@@ -208,6 +217,7 @@ def validate_letter_form(
 
 
 def normalize_form_input(form: Mapping[str, str]) -> dict[str, str]:
+    logger.debug("normalize_form_input called")
     formatting_fields = {
         "sender_backaddress_separator",
         "subject_separator",
@@ -221,11 +231,30 @@ def normalize_form_input(form: Mapping[str, str]) -> dict[str, str]:
     return normalized
 
 
+def _parse_date_input(value: str) -> date | None:
+    logger.debug("_parse_date_input called; raw=%s", value)
+    text = value.strip()
+    if not text:
+        return None
+
+    try:
+        return date.fromisoformat(text)
+    except ValueError:
+        pass
+
+    try:
+        return datetime.strptime(text, "%d.%m.%Y").date()
+    except ValueError:
+        return None
+
+
 def _join_non_empty(values: tuple[str, ...]) -> str:
+    logger.debug("_join_non_empty called; value_count=%d", len(values))
     return " ".join(value for value in values if value)
 
 
 def _label_for_field(key: str) -> str:
+    logger.debug("_label_for_field called; key=%s", key)
     labels = {
         "sender_last_name": "Absender Nachname",
         "sender_first_name": "Absender Vorname",
@@ -267,6 +296,7 @@ def _label_for_field(key: str) -> str:
         "subject": "Betreff",
         "subject_separator": "Betreff-Trennzeichen",
         "opening": "Anrede",
+        "body_mode": "Textmodus",
         "body": "Brieftext",
         "closing": "Grußformel",
         "ps": "Postskriptum",

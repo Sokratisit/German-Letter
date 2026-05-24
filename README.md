@@ -8,6 +8,7 @@ It is intended as a practical letter-writing tool rather than a generic LaTeX ed
 
 - Web form for German business-style letters
 - PDF generation with LaTeX `scrlttr2`
+- Main letter body can be authored as Markdown via Pandoc or entered directly as LaTeX
 - Browser download of the generated PDF
 - Automatic PDF filename preview in the form
 - Sender and recipient data can be stored in browser cookies via `Speichern`
@@ -78,6 +79,12 @@ project/
    http://127.0.0.1:51816/
    ```
 
+Optional preflight check for runtime tools:
+
+```bash
+uv run brief-healthcheck
+```
+
 ## Tests
 
 Run the test suite with:
@@ -90,12 +97,14 @@ Local one-off helper scripts for manual deployment or endpoint testing can be ke
 
 ## Requirements
 
-The application requires a working `pdflatex` binary at runtime.
+The application requires Docker for sandboxed LaTeX compilation at runtime.
+For Markdown letter bodies, it also requires a working `pandoc` binary.
 
 By default, it looks for:
 
 ```text
-pdflatex
+docker
+pandoc
 ```
 
 If necessary, the binary path can be configured with an environment variable.
@@ -106,6 +115,11 @@ Supported environment variables:
 
 - `LETTER_APP_SECRET_KEY`
 - `LETTER_APP_PDFLATEX_BIN`
+- `LETTER_APP_PANDOC_BIN`
+- `LETTER_APP_LATEX_USE_DOCKER` (default: `true`)
+- `LETTER_APP_DOCKER_BIN` (default: `docker`)
+- `LETTER_APP_DOCKER_IMAGE` (default: `blang/latex:ctanfull`)
+- `LETTER_APP_LATEX_TIMEOUT_SECONDS` (default: `20`)
 - `LETTER_APP_MAX_CONTENT_LENGTH`
 
 `LETTER_APP_GENERATED_DIR` still exists in the code for compatibility, but the web app currently delivers PDFs directly as browser downloads instead of storing them permanently on the server.

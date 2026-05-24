@@ -39,6 +39,7 @@ def _valid_payload() -> dict[str, str]:
         "subject": "Kündigung",
         "subject_separator": ": ",
         "opening": "Sehr geehrte Frau Beispiel,",
+        "body_mode": "markdown",
         "body": "Hiermit kündige ich den Vertrag fristgerecht.",
         "closing": "Mit freundlichen Grüßen",
         "ps": "Bitte bestätigen Sie den Eingang.",
@@ -48,7 +49,7 @@ def _valid_payload() -> dict[str, str]:
         "encl_separator": "Anlagen",
         "place": "Berlin",
         "place_separator": ", ",
-        "date_iso": "2026-04-24",
+        "date_iso": "24.04.2026",
         "filename_addressee": "Beispiel",
     }
 
@@ -60,6 +61,8 @@ def test_validation_accepts_valid_payload() -> None:
     assert data.date_iso == date(2026, 4, 24)
     assert data.filename_addressee == "Beispiel"
     assert data.sender_display_name == "Dr. Max Mustermann"
+    assert data.body_mode == "markdown"
+    assert data.body == "Hiermit kündige ich den Vertrag fristgerecht."
 
 
 def test_validation_allows_empty_optional_content_fields() -> None:
@@ -79,7 +82,25 @@ def test_validation_allows_empty_optional_content_fields() -> None:
 
 def test_validation_rejects_invalid_date() -> None:
     payload = _valid_payload()
-    payload["date_iso"] = "24.04.2026"
+    payload["date_iso"] = "2026/04/24"
     data, errors = validate_letter_form(payload)
     assert data is None
-    assert errors["date_iso"] == "Datum muss im Format YYYY-MM-DD sein."
+    assert errors["date_iso"] == "Datum muss im Format TT.MM.JJJJ sein."
+
+
+def test_validation_accepts_single_digit_day_and_month() -> None:
+    payload = _valid_payload()
+    payload["date_iso"] = "1.3.2004"
+    data, errors = validate_letter_form(payload)
+    assert errors == {}
+    assert data is not None
+    assert data.date_iso == date(2004, 3, 1)
+
+
+def test_validation_accepts_iso_date_too() -> None:
+    payload = _valid_payload()
+    payload["date_iso"] = "2004-03-01"
+    data, errors = validate_letter_form(payload)
+    assert errors == {}
+    assert data is not None
+    assert data.date_iso == date(2004, 3, 1)

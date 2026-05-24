@@ -12,6 +12,7 @@
 <main class="container">
     <h1>Brief erstellen</h1>
     <p class="meta-links">
+        <a class="subtle-link" href="{{ url_for('main.guide') }}">Anleitung</a>
         <a class="subtle-link" href="{{ url_for('main.terms') }}">Nutzungsbedingungen</a>
         <a class="subtle-link" href="{{ url_for('main.faq') }}">FAQ</a>
     </p>
@@ -266,7 +267,7 @@
                 </div>
                 <div class="field-group">
                     <label for="date_iso">Datum</label>
-                    <input class="highlighted-field" id="date_iso" name="date_iso" type="date" value="{{ form_data.get('date_iso', '') }}">
+                    <input class="highlighted-field" id="date_iso" name="date_iso" type="text" inputmode="numeric" placeholder="dd.mm.yyyy" value="{{ form_data.get('date_iso', '') }}">
                     {% if errors.get('date_iso') %}<p class="error">{{ errors['date_iso'] }}</p>{% endif %}
                 </div>
             </div>
@@ -286,7 +287,7 @@
                     {% if errors.get('subject') %}<p class="error">{{ errors['subject'] }}</p>{% endif %}
                 </div>
                 <div class="field-group field-number">
-                    <label for="subject_separator">Betreff-Trennzeichen</label>
+                    <label for="subject_separator">Trennzeichen</label>
                     <input id="subject_separator" name="subject_separator" type="text" value="{{ form_data.get('subject_separator', ': ') }}">
                     {% if errors.get('subject_separator') %}<p class="error">{{ errors['subject_separator'] }}</p>{% endif %}
                 </div>
@@ -296,9 +297,23 @@
             <input class="highlighted-field" id="opening" name="opening" type="text" value="{{ form_data.get('opening', '') }}">
             {% if errors.get('opening') %}<p class="error">{{ errors['opening'] }}</p>{% endif %}
 
+            <fieldset class="editor-mode-group">
+                <legend>Textformat</legend>
+                <label class="radio-label">
+                    <input id="body_mode_markdown" name="body_mode" type="radio" value="markdown" {% if form_data.get('body_mode', 'markdown') != 'latex' %}checked{% endif %}>
+                    Markdown
+                    <a class="subtle-link inline-help-link" href="{{ url_for('main.markdown_guide') }}">Anleitung</a>
+                </label>
+                <label class="radio-label">
+                    <input id="body_mode_latex" name="body_mode" type="radio" value="latex" {% if form_data.get('body_mode') == 'latex' %}checked{% endif %}>
+                    LaTeX
+                </label>
+            </fieldset>
+
             <label for="body">Text</label>
             <textarea class="highlighted-field" id="body" name="body" rows="8">{{ form_data.get('body', '') }}</textarea>
             {% if errors.get('body') %}<p class="error">{{ errors['body'] }}</p>{% endif %}
+            {% if errors.get('body_mode') %}<p class="error">{{ errors['body_mode'] }}</p>{% endif %}
 
             <label for="closing">Grußformel</label>
             <input class="highlighted-field" id="closing" name="closing" type="text" value="{{ form_data.get('closing', 'Mit freundlichen Grüßen') }}">
@@ -319,7 +334,7 @@
                     {% if errors.get('cc') %}<p class="error">{{ errors['cc'] }}</p>{% endif %}
                 </div>
                 <div class="field-group field-number">
-                    <label for="cc_separator">Verteiler-Trennzeichen</label>
+                    <label for="cc_separator">Trennzeichen</label>
                     <input id="cc_separator" name="cc_separator" type="text" value="{{ form_data.get('cc_separator', ': ') }}">
                     {% if errors.get('cc_separator') %}<p class="error">{{ errors['cc_separator'] }}</p>{% endif %}
                 </div>
@@ -332,7 +347,7 @@
                     {% if errors.get('encl') %}<p class="error">{{ errors['encl'] }}</p>{% endif %}
                 </div>
                 <div class="field-group field-number">
-                    <label for="encl_separator">Anlagen-Trennzeichen</label>
+                    <label for="encl_separator">Trennzeichen</label>
                     <input id="encl_separator" name="encl_separator" type="text" value="{{ form_data.get('encl_separator', ': ') }}">
                     {% if errors.get('encl_separator') %}<p class="error">{{ errors['encl_separator'] }}</p>{% endif %}
                 </div>

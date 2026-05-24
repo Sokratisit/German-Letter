@@ -19,6 +19,7 @@ dev = [
 
 [project.scripts]
 brief = "main:main"
+brief-healthcheck = "main:healthcheck_main"
 
 [tool.setuptools]
 packages = ["app"]

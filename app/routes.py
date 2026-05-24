@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from datetime import date
 from io import BytesIO
 
@@ -12,10 +13,11 @@ from flask import (
     send_file,
 )
 
-from .latex import LatexBuildError, render_letter_pdf
+from .latex import LatexBuildError, PandocConversionError, render_letter_pdf
 from .validation import normalize_form_input, validate_letter_form
 
 bp = Blueprint("main", __name__)
+logger = logging.getLogger(__name__)
 DEFAULT_CLOSING = "Mit freundlichen Grüßen"
 SENDER_COOKIE_NAME = "letter_sender"
 RECIPIENT_COOKIE_NAME = "letter_recipient"
@@ -116,6 +118,7 @@ QUERY_PARAM_MAP = {
 
 @bp.get("/")
 def index() -> str:
+    logger.debug("index called")
     form_data = _form_data_from_cookies()
     form_data.update(_form_data_from_query())
     return render_template(
@@ -129,16 +132,31 @@ def index() -> str:
 
 @bp.get("/bedingungen")
 def terms() -> str:
+    logger.debug("terms called")
     return render_template("terms.html")
+
+
+@bp.get("/anleitung")
+def guide() -> str:
+    logger.debug("guide called")
+    return render_template("guide.html")
+
+
+@bp.get("/anleitung-markdown")
+def markdown_guide() -> str:
+    logger.debug("markdown_guide called")
+    return render_template("markdown_guide.html")
 
 
 @bp.get("/faq")
 def faq() -> str:
+    logger.debug("faq called")
     return render_template("faq.html")
 
 
 @bp.post("/generate")
 def generate() -> tuple[str, int] | str:
+    logger.debug("generate called")
     form_data = normalize_form_input(dict(request.form.items()))
     validated, errors = validate_letter_form(form_data)
     if errors:
@@ -159,13 +177,22 @@ def generate() -> tuple[str, int] | str:
         filename, pdf_bytes = render_letter_pdf(
             validated,
             pdflatex_bin=current_app.config["PDFLATEX_BIN"],
+            pandoc_bin=current_app.config["PANDOC_BIN"],
+            use_docker=current_app.config["LATEX_USE_DOCKER"],
+            docker_bin=current_app.config["DOCKER_BIN"],
+            docker_image=current_app.config["DOCKER_IMAGE"],
+            timeout_seconds=current_app.config["LATEX_TIMEOUT_SECONDS"],
         )
-    except LatexBuildError as exc:
+    except (LatexBuildError, PandocConversionError) as exc:
+        logger.error("Letter generation exception: %s", exc)
         current_app.logger.exception("Letter generation failed")
+        error_message = str(exc)
+        if current_app.config.get("LATEX_USE_DOCKER") and isinstance(exc, LatexBuildError):
+            error_message = f"{error_message} Hinweis: Docker-Umgebung und Docker-Image-Konfiguration prüfen."
         response = current_app.make_response(
             render_template(
                 "index.html",
-                errors={"__all__": str(exc)},
+                errors={"__all__": error_message},
                 form_data=form_data,
                 success_message="",
                 today_iso=form_data.get("date_iso", date.today().isoformat()),
@@ -186,7 +213,8 @@ def generate() -> tuple[str, int] | str:
 
 
 def _form_data_from_cookies() -> dict[str, str]:
-    form_data = {"closing": DEFAULT_CLOSING}
+    logger.debug("_form_data_from_cookies called")
+    form_data = {"closing": DEFAULT_CLOSING, "body_mode": "markdown"}
     form_data.update(_load_cookie_data(SENDER_COOKIE_NAME, SENDER_FIELDS))
     form_data.update(_load_cookie_data(RECIPIENT_COOKIE_NAME, RECIPIENT_FIELDS))
     form_data["save_sender"] = "on" if request.cookies.get(SENDER_COOKIE_NAME) else ""
@@ -195,6 +223,7 @@ def _form_data_from_cookies() -> dict[str, str]:
 
 
 def _form_data_from_query() -> dict[str, str]:
+    logger.debug("_form_data_from_query called")
     query_data: dict[str, str] = {}
     for query_key, form_key in QUERY_PARAM_MAP.items():
         value = request.args.get(query_key)
@@ -204,6 +233,7 @@ def _form_data_from_query() -> dict[str, str]:
 
 
 def _load_cookie_data(cookie_name: str, allowed_fields: tuple[str, ...]) -> dict[str, str]:
+    logger.debug("_load_cookie_data called; cookie_name=%s", cookie_name)
     raw_value = request.cookies.get(cookie_name)
     if not raw_value:
         return {}
@@ -211,6 +241,7 @@ def _load_cookie_data(cookie_name: str, allowed_fields: tuple[str, ...]) -> dict
     try:
         parsed = json.loads(raw_value)
     except json.JSONDecodeError:
+        logger.error("Invalid JSON in cookie: %s", cookie_name)
         return {}
 
     if not isinstance(parsed, dict):
@@ -220,6 +251,7 @@ def _load_cookie_data(cookie_name: str, allowed_fields: tuple[str, ...]) -> dict
 
 
 def _apply_section_cookies(response, form_data: dict[str, str]) -> None:
+    logger.debug("_apply_section_cookies called")
     _apply_cookie(
         response,
         cookie_name=SENDER_COOKIE_NAME,
@@ -237,6 +269,7 @@ def _apply_section_cookies(response, form_data: dict[str, str]) -> None:
 
 
 def _apply_cookie(response, *, cookie_name: str, should_store: bool, field_names: tuple[str, ...], form_data: dict[str, str]) -> None:
+    logger.debug("_apply_cookie called; cookie_name=%s should_store=%s", cookie_name, should_store)
     if not should_store:
         response.delete_cookie(cookie_name)
         return

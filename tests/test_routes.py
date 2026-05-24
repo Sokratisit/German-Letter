@@ -45,6 +45,7 @@ def _valid_payload() -> dict[str, str]:
         "subject": "Kündigung",
         "subject_separator": ": ",
         "opening": "Sehr geehrte Frau Beispiel,",
+        "body_mode": "markdown",
         "body": "Hiermit kündige ich den Vertrag fristgerecht.",
         "closing": "Mit freundlichen Grüßen",
         "ps": "Bitte bestätigen Sie den Eingang.",
@@ -54,7 +55,7 @@ def _valid_payload() -> dict[str, str]:
         "encl_separator": "Anlagen",
         "place": "Berlin",
         "place_separator": ", ",
-        "date_iso": "2026-04-24",
+        "date_iso": "24.04.2026",
         "filename_addressee": "Beispiel",
     }
 
@@ -75,6 +76,32 @@ def test_index_prefills_sender_and_recipient_from_cookies() -> None:
     assert 'value="4711"' in body
     assert 'id="save_sender" name="save_sender" type="checkbox" checked' in body
     assert 'id="save_recipient" name="save_recipient" type="checkbox" checked' in body
+    assert 'id="body_mode_markdown" name="body_mode" type="radio" value="markdown" checked' in body
+    assert 'href="/anleitung"' in body
+
+
+def test_guide_page_links_back_to_main_page() -> None:
+    app = create_app()
+    client = app.test_client()
+
+    response = client.get("/anleitung")
+
+    body = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert "<h1>Anleitung</h1>" in body
+    assert 'href="/"' in body
+
+
+def test_markdown_guide_page_exists_and_links_back() -> None:
+    app = create_app()
+    client = app.test_client()
+
+    response = client.get("/anleitung-markdown")
+
+    body = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert "<h1>Markdown Anleitung</h1>" in body
+    assert 'href="/"' in body
 
 
 def test_generate_sets_sender_and_recipient_cookies(monkeypatch) -> None:
@@ -129,3 +156,19 @@ def test_index_prefers_query_parameters_over_cookies_per_field() -> None:
     assert 'value="Hamburg"' in body
     assert 'name="place" type="text" value="Berlin"' in body
     assert 'name="sender_custom_1_key" type="text" value="Yahoo"' in body
+
+
+def test_faq_and_terms_do_not_link_to_guide() -> None:
+    app = create_app()
+    client = app.test_client()
+
+    faq_response = client.get("/faq")
+    terms_response = client.get("/bedingungen")
+
+    faq_body = faq_response.get_data(as_text=True)
+    terms_body = terms_response.get_data(as_text=True)
+
+    assert faq_response.status_code == 200
+    assert terms_response.status_code == 200
+    assert 'href="/anleitung"' not in faq_body
+    assert 'href="/anleitung"' not in terms_body

@@ -1,9 +1,14 @@
 from dataclasses import replace
 from datetime import date
 
+import pytest
+
 from app.latex import (
+    PandocConversionError,
+    _docker_error_message,
     build_letter_tex,
     build_output_filename,
+    convert_markdown_to_latex,
     format_german_date,
     write_tex_file,
 )
@@ -52,7 +57,8 @@ def _letter_data() -> LetterFormData:
         subject="Test & Anfrage",
         subject_separator=": ",
         opening="Sehr geehrte Frau Beispiel,",
-        body="Zeile 1\nZeile 2",
+        body_mode="latex",
+        body="Zeile 1\\\\ Zeile 2",
         closing="Mit freundlichen Grüßen",
         ps="Bitte melden Sie sich kurzfristig.",
         cc="Ablage\nVertrieb",
@@ -172,13 +178,35 @@ def test_backaddress_abbreviates_multiple_given_names() -> None:
     assert r"\setkomavar{backaddress}{Prof. Dr. H. J. Meyer, 2. Etage, Musterweg 1, 12345 Berlin}" in tex
 
 
-def test_body_uses_blank_lines_as_paragraph_breaks() -> None:
+def test_body_uses_blank_lines_as_paragraph_breaks(monkeypatch) -> None:
     data = replace(
         _letter_data(),
+        body_mode="markdown",
         body="Erste Zeile\nZweite Zeile\n\nDritter Absatz",
     )
-    tex = build_letter_tex(data)
+    monkeypatch.setattr(
+        "app.latex.convert_markdown_to_latex",
+        lambda *_args, **_kwargs: "Erste Zeile\\\\ Zweite Zeile\n\nDritter Absatz",
+    )
+    tex = build_letter_tex(data, pandoc_bin="pandoc")
     assert "Erste Zeile\\\\ Zweite Zeile\n\nDritter Absatz" in tex
+
+
+def test_body_uses_pandoc_output_for_markdown(monkeypatch) -> None:
+    data = replace(
+        _letter_data(),
+        body_mode="markdown",
+        body="Markdown Input",
+    )
+    monkeypatch.setattr("app.latex.convert_markdown_to_latex", lambda *_args, **_kwargs: r"\textbf{Konvertiert}")
+    tex = build_letter_tex(data)
+    assert r"\textbf{Konvertiert}" in tex
+
+
+def test_body_uses_raw_latex_when_latex_mode_is_selected() -> None:
+    data = replace(_letter_data(), body_mode="latex", body=r"\begin{itemize}\item Direkt\end{itemize}")
+    tex = build_letter_tex(data)
+    assert r"\begin{itemize}\item Direkt\end{itemize}" in tex
 
 
 def test_empty_opening_uses_safe_placeholder() -> None:
@@ -192,3 +220,21 @@ def test_template_omits_date_value_when_missing() -> None:
     data = replace(_letter_data(), date_iso=None)
     tex = build_letter_tex(data)
     assert r"\setkomavar{date}{Berlin}" in tex
+
+
+def test_convert_markdown_to_latex_raises_pandoc_error(monkeypatch) -> None:
+    class Result:
+        returncode = 9
+        stdout = ""
+        stderr = "pandoc parse error"
+
+    monkeypatch.setattr("app.latex.subprocess.run", lambda *args, **kwargs: Result())
+
+    with pytest.raises(PandocConversionError, match="pandoc parse error"):
+        convert_markdown_to_latex("**bad**")
+
+
+def test_docker_error_message_prefers_specific_line_before_help_hint() -> None:
+    stderr = "docker: invalid reference format.\nRun 'docker run --help' for more information.\n"
+    stdout = ""
+    assert _docker_error_message(stderr, stdout) == "docker: invalid reference format."

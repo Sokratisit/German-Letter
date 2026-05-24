@@ -121,6 +121,42 @@ label {
     color: #4c5970;
 }
 
+.field-hint {
+    margin: 0.35rem 0 0;
+    color: #58657b;
+    font-size: 0.92rem;
+}
+
+.editor-mode-group {
+    margin: 0.75rem 0 0.5rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.editor-mode-group legend {
+    padding: 0 0.3rem;
+    font-weight: 600;
+}
+
+.radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-right: 1rem;
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+.radio-label input {
+    width: auto;
+    margin: 0;
+}
+
+.inline-help-link {
+    margin-left: 0.35rem;
+}
+
 input,
 textarea {
     width: 100%;
