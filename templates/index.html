@@ -27,12 +27,12 @@
             <div class="field-row field-row-3">
                 <div class="field-group">
                     <label for="sender_last_name">Nachname</label>
-                    <input id="sender_last_name" name="sender_last_name" type="text" autocomplete="section-sender family-name" value="{{ form_data.get('sender_last_name', '') }}">
+                    <input class="highlighted-field" id="sender_last_name" name="sender_last_name" type="text" autocomplete="section-sender family-name" value="{{ form_data.get('sender_last_name', '') }}">
                     {% if errors.get('sender_last_name') %}<p class="error">{{ errors['sender_last_name'] }}</p>{% endif %}
                 </div>
                 <div class="field-group">
                     <label for="sender_first_name">Vorname</label>
-                    <input id="sender_first_name" name="sender_first_name" type="text" autocomplete="section-sender given-name" value="{{ form_data.get('sender_first_name', '') }}">
+                    <input class="highlighted-field" id="sender_first_name" name="sender_first_name" type="text" autocomplete="section-sender given-name" value="{{ form_data.get('sender_first_name', '') }}">
                     {% if errors.get('sender_first_name') %}<p class="error">{{ errors['sender_first_name'] }}</p>{% endif %}
                 </div>
                 <div class="field-group">
@@ -49,12 +49,12 @@
             <div class="field-row field-row-street">
                 <div class="field-group field-grow">
                     <label for="sender_street">Straße</label>
-                    <input id="sender_street" name="sender_street" type="text" autocomplete="section-sender address-line1" value="{{ form_data.get('sender_street', '') }}">
+                    <input class="highlighted-field" id="sender_street" name="sender_street" type="text" autocomplete="section-sender address-line1" value="{{ form_data.get('sender_street', '') }}">
                     {% if errors.get('sender_street') %}<p class="error">{{ errors['sender_street'] }}</p>{% endif %}
                 </div>
                 <div class="field-group field-number">
                     <label for="sender_street_number">Nummer</label>
-                    <input id="sender_street_number" name="sender_street_number" type="text" autocomplete="section-sender off" value="{{ form_data.get('sender_street_number', '') }}">
+                    <input class="highlighted-field" id="sender_street_number" name="sender_street_number" type="text" autocomplete="section-sender off" value="{{ form_data.get('sender_street_number', '') }}">
                     {% if errors.get('sender_street_number') %}<p class="error">{{ errors['sender_street_number'] }}</p>{% endif %}
                 </div>
             </div>
@@ -62,12 +62,12 @@
             <div class="field-row field-row-city">
                 <div class="field-group field-postal">
                     <label for="sender_postal_code">PLZ</label>
-                    <input id="sender_postal_code" name="sender_postal_code" type="text" autocomplete="section-sender postal-code" value="{{ form_data.get('sender_postal_code', '') }}">
+                    <input class="highlighted-field" id="sender_postal_code" name="sender_postal_code" type="text" autocomplete="section-sender postal-code" value="{{ form_data.get('sender_postal_code', '') }}">
                     {% if errors.get('sender_postal_code') %}<p class="error">{{ errors['sender_postal_code'] }}</p>{% endif %}
                 </div>
                 <div class="field-group field-grow">
                     <label for="sender_city">Ort</label>
-                    <input id="sender_city" name="sender_city" type="text" autocomplete="section-sender address-level2" value="{{ form_data.get('sender_city', '') }}">
+                    <input class="highlighted-field" id="sender_city" name="sender_city" type="text" autocomplete="section-sender address-level2" value="{{ form_data.get('sender_city', '') }}">
                     {% if errors.get('sender_city') %}<p class="error">{{ errors['sender_city'] }}</p>{% endif %}
                 </div>
             </div>
@@ -110,18 +110,9 @@
             <input id="sender_logo" name="sender_logo" type="text" value="{{ form_data.get('sender_logo', '') }}">
             {% if errors.get('sender_logo') %}<p class="error">{{ errors['sender_logo'] }}</p>{% endif %}
 
-            <div class="field-row field-row-2">
-                <div class="field-group">
-                    <label for="my_reference">Mein Zeichen</label>
-                    <input id="my_reference" name="my_reference" type="text" value="{{ form_data.get('my_reference', '') }}">
-                    {% if errors.get('my_reference') %}<p class="error">{{ errors['my_reference'] }}</p>{% endif %}
-                </div>
-                <div class="field-group">
-                    <label for="signature">Unterschrift</label>
-                    <input id="signature" name="signature" type="text" value="{{ form_data.get('signature', '') }}">
-                    {% if errors.get('signature') %}<p class="error">{{ errors['signature'] }}</p>{% endif %}
-                </div>
-            </div>
+            <label for="my_reference">Mein Zeichen</label>
+            <input id="my_reference" name="my_reference" type="text" value="{{ form_data.get('my_reference', '') }}">
+            {% if errors.get('my_reference') %}<p class="error">{{ errors['my_reference'] }}</p>{% endif %}
 
             <label for="sender_backaddress_separator">Rücksendeadress-Trennzeichen</label>
             <input id="sender_backaddress_separator" name="sender_backaddress_separator" type="text" value="{{ form_data.get('sender_backaddress_separator', ', ') }}">
@@ -139,12 +130,12 @@
             <div class="field-row field-row-3">
                 <div class="field-group">
                     <label for="recipient_last_name">Nachname</label>
-                    <input id="recipient_last_name" name="recipient_last_name" type="text" autocomplete="section-recipient family-name" value="{{ form_data.get('recipient_last_name', '') }}">
+                    <input class="highlighted-field" id="recipient_last_name" name="recipient_last_name" type="text" autocomplete="section-recipient family-name" value="{{ form_data.get('recipient_last_name', '') }}">
                     {% if errors.get('recipient_last_name') %}<p class="error">{{ errors['recipient_last_name'] }}</p>{% endif %}
                 </div>
                 <div class="field-group">
                     <label for="recipient_first_name">Vorname</label>
-                    <input id="recipient_first_name" name="recipient_first_name" type="text" autocomplete="section-recipient given-name" value="{{ form_data.get('recipient_first_name', '') }}">
+                    <input class="highlighted-field" id="recipient_first_name" name="recipient_first_name" type="text" autocomplete="section-recipient given-name" value="{{ form_data.get('recipient_first_name', '') }}">
                     {% if errors.get('recipient_first_name') %}<p class="error">{{ errors['recipient_first_name'] }}</p>{% endif %}
                 </div>
                 <div class="field-group">
@@ -161,12 +152,12 @@
             <div class="field-row field-row-street">
                 <div class="field-group field-grow">
                     <label for="recipient_street">Straße</label>
-                    <input id="recipient_street" name="recipient_street" type="text" autocomplete="section-recipient address-line1" value="{{ form_data.get('recipient_street', '') }}">
+                    <input class="highlighted-field" id="recipient_street" name="recipient_street" type="text" autocomplete="section-recipient address-line1" value="{{ form_data.get('recipient_street', '') }}">
                     {% if errors.get('recipient_street') %}<p class="error">{{ errors['recipient_street'] }}</p>{% endif %}
                 </div>
                 <div class="field-group field-number">
                     <label for="recipient_street_number">Nummer</label>
-                    <input id="recipient_street_number" name="recipient_street_number" type="text" autocomplete="section-recipient off" value="{{ form_data.get('recipient_street_number', '') }}">
+                    <input class="highlighted-field" id="recipient_street_number" name="recipient_street_number" type="text" autocomplete="section-recipient off" value="{{ form_data.get('recipient_street_number', '') }}">
                     {% if errors.get('recipient_street_number') %}<p class="error">{{ errors['recipient_street_number'] }}</p>{% endif %}
                 </div>
             </div>
@@ -174,12 +165,12 @@
             <div class="field-row field-row-city">
                 <div class="field-group field-postal">
                     <label for="recipient_postal_code">PLZ</label>
-                    <input id="recipient_postal_code" name="recipient_postal_code" type="text" autocomplete="section-recipient postal-code" value="{{ form_data.get('recipient_postal_code', '') }}">
+                    <input class="highlighted-field" id="recipient_postal_code" name="recipient_postal_code" type="text" autocomplete="section-recipient postal-code" value="{{ form_data.get('recipient_postal_code', '') }}">
                     {% if errors.get('recipient_postal_code') %}<p class="error">{{ errors['recipient_postal_code'] }}</p>{% endif %}
                 </div>
                 <div class="field-group field-grow">
                     <label for="recipient_city">Ort</label>
-                    <input id="recipient_city" name="recipient_city" type="text" autocomplete="section-recipient address-level2" value="{{ form_data.get('recipient_city', '') }}">
+                    <input class="highlighted-field" id="recipient_city" name="recipient_city" type="text" autocomplete="section-recipient address-level2" value="{{ form_data.get('recipient_city', '') }}">
                     {% if errors.get('recipient_city') %}<p class="error">{{ errors['recipient_city'] }}</p>{% endif %}
                 </div>
             </div>
@@ -217,70 +208,12 @@
         </section>
 
         <section>
-            <h2>Briefinhalt</h2>
-
-            <div class="field-row field-row-2">
-                <div class="field-group">
-                    <label for="letter_title">Brieftitel</label>
-                    <input id="letter_title" name="letter_title" type="text" value="{{ form_data.get('letter_title', '') }}">
-                    {% if errors.get('letter_title') %}<p class="error">{{ errors['letter_title'] }}</p>{% endif %}
-                </div>
-                <div class="field-group">
-                    <label for="subject_separator">Betreff-Trennzeichen</label>
-                    <input id="subject_separator" name="subject_separator" type="text" value="{{ form_data.get('subject_separator', ': ') }}">
-                    {% if errors.get('subject_separator') %}<p class="error">{{ errors['subject_separator'] }}</p>{% endif %}
-                </div>
-            </div>
-
-            <label for="subject">Betreff</label>
-            <input id="subject" name="subject" type="text" value="{{ form_data.get('subject', '') }}">
-            {% if errors.get('subject') %}<p class="error">{{ errors['subject'] }}</p>{% endif %}
-
-            <label for="opening">Anrede</label>
-            <input id="opening" name="opening" type="text" value="{{ form_data.get('opening', '') }}">
-            {% if errors.get('opening') %}<p class="error">{{ errors['opening'] }}</p>{% endif %}
-
-            <label for="body">Text</label>
-            <textarea id="body" name="body" rows="8">{{ form_data.get('body', '') }}</textarea>
-            {% if errors.get('body') %}<p class="error">{{ errors['body'] }}</p>{% endif %}
-
-            <label for="closing">Grußformel</label>
-            <input id="closing" name="closing" type="text" value="{{ form_data.get('closing', 'Mit freundlichen Grüßen') }}">
-            {% if errors.get('closing') %}<p class="error">{{ errors['closing'] }}</p>{% endif %}
-
-            <label for="ps">Postskriptum</label>
-            <textarea id="ps" name="ps" rows="2">{{ form_data.get('ps', '') }}</textarea>
-            {% if errors.get('ps') %}<p class="error">{{ errors['ps'] }}</p>{% endif %}
-
-            <div class="field-row field-row-2">
-                <div class="field-group">
-                    <label for="cc_separator">Verteiler-Trennzeichen</label>
-                    <input id="cc_separator" name="cc_separator" type="text" value="{{ form_data.get('cc_separator', ': ') }}">
-                    {% if errors.get('cc_separator') %}<p class="error">{{ errors['cc_separator'] }}</p>{% endif %}
-                </div>
-                <div class="field-group">
-                    <label for="encl_separator">Anlagen-Trennzeichen</label>
-                    <input id="encl_separator" name="encl_separator" type="text" value="{{ form_data.get('encl_separator', ': ') }}">
-                    {% if errors.get('encl_separator') %}<p class="error">{{ errors['encl_separator'] }}</p>{% endif %}
-                </div>
-            </div>
-
-            <label for="cc">Verteiler</label>
-            <textarea id="cc" name="cc" rows="3">{{ form_data.get('cc', '') }}</textarea>
-            {% if errors.get('cc') %}<p class="error">{{ errors['cc'] }}</p>{% endif %}
-
-            <label for="encl">Anlagen</label>
-            <textarea id="encl" name="encl" rows="3">{{ form_data.get('encl', '') }}</textarea>
-            {% if errors.get('encl') %}<p class="error">{{ errors['encl'] }}</p>{% endif %}
-        </section>
-
-        <section>
             <h2>Ort und Datum</h2>
 
-            <div class="field-row field-row-2">
+            <div class="field-row field-row-3">
                 <div class="field-group">
                     <label for="place">Ort</label>
-                    <input id="place" name="place" type="text" value="{{ form_data.get('place', '') }}">
+                    <input class="highlighted-field" id="place" name="place" type="text" value="{{ form_data.get('place', '') }}">
                     {% if errors.get('place') %}<p class="error">{{ errors['place'] }}</p>{% endif %}
                 </div>
                 <div class="field-group">
@@ -288,31 +221,104 @@
                     <input id="place_separator" name="place_separator" type="text" value="{{ form_data.get('place_separator', ', ') }}">
                     {% if errors.get('place_separator') %}<p class="error">{{ errors['place_separator'] }}</p>{% endif %}
                 </div>
+                <div class="field-group">
+                    <label for="date_iso">Datum</label>
+                    <input id="date_iso" name="date_iso" type="date" value="{{ form_data.get('date_iso', today_iso) }}">
+                    {% if errors.get('date_iso') %}<p class="error">{{ errors['date_iso'] }}</p>{% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Briefinhalt</h2>
+
+            <label for="letter_title">Brieftitel</label>
+            <input id="letter_title" name="letter_title" type="text" value="{{ form_data.get('letter_title', '') }}">
+            {% if errors.get('letter_title') %}<p class="error">{{ errors['letter_title'] }}</p>{% endif %}
+
+            <div class="field-row field-row-street">
+                <div class="field-group field-grow">
+                    <label for="subject">Betreff</label>
+                    <input id="subject" name="subject" type="text" value="{{ form_data.get('subject', '') }}">
+                    {% if errors.get('subject') %}<p class="error">{{ errors['subject'] }}</p>{% endif %}
+                </div>
+                <div class="field-group field-number">
+                    <label for="subject_separator">Betreff-Trennzeichen</label>
+                    <input id="subject_separator" name="subject_separator" type="text" value="{{ form_data.get('subject_separator', ': ') }}">
+                    {% if errors.get('subject_separator') %}<p class="error">{{ errors['subject_separator'] }}</p>{% endif %}
+                </div>
             </div>
 
-            <label for="date_iso">Datum</label>
-            <input id="date_iso" name="date_iso" type="date" value="{{ form_data.get('date_iso', today_iso) }}">
-            {% if errors.get('date_iso') %}<p class="error">{{ errors['date_iso'] }}</p>{% endif %}
+            <label for="opening">Anrede</label>
+            <input class="highlighted-field" id="opening" name="opening" type="text" value="{{ form_data.get('opening', '') }}">
+            {% if errors.get('opening') %}<p class="error">{{ errors['opening'] }}</p>{% endif %}
+
+            <label for="body">Text</label>
+            <textarea class="highlighted-field" id="body" name="body" rows="8">{{ form_data.get('body', '') }}</textarea>
+            {% if errors.get('body') %}<p class="error">{{ errors['body'] }}</p>{% endif %}
+
+            <label for="closing">Grußformel</label>
+            <input class="highlighted-field" id="closing" name="closing" type="text" value="{{ form_data.get('closing', 'Mit freundlichen Grüßen') }}">
+            {% if errors.get('closing') %}<p class="error">{{ errors['closing'] }}</p>{% endif %}
+
+            <label for="signature">Unterschrift</label>
+            <input class="highlighted-field" id="signature" name="signature" type="text" value="{{ form_data.get('signature', '') }}">
+            {% if errors.get('signature') %}<p class="error">{{ errors['signature'] }}</p>{% endif %}
+
+            <label for="ps">Postskriptum</label>
+            <textarea id="ps" name="ps" rows="2">{{ form_data.get('ps', '') }}</textarea>
+            {% if errors.get('ps') %}<p class="error">{{ errors['ps'] }}</p>{% endif %}
+
+            <div class="field-row field-row-street">
+                <div class="field-group field-grow">
+                    <label for="cc">Verteiler</label>
+                    <textarea id="cc" name="cc" rows="3">{{ form_data.get('cc', '') }}</textarea>
+                    {% if errors.get('cc') %}<p class="error">{{ errors['cc'] }}</p>{% endif %}
+                </div>
+                <div class="field-group field-number">
+                    <label for="cc_separator">Verteiler-Trennzeichen</label>
+                    <input id="cc_separator" name="cc_separator" type="text" value="{{ form_data.get('cc_separator', ': ') }}">
+                    {% if errors.get('cc_separator') %}<p class="error">{{ errors['cc_separator'] }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="field-row field-row-street">
+                <div class="field-group field-grow">
+                    <label for="encl">Anlagen</label>
+                    <textarea id="encl" name="encl" rows="3">{{ form_data.get('encl', '') }}</textarea>
+                    {% if errors.get('encl') %}<p class="error">{{ errors['encl'] }}</p>{% endif %}
+                </div>
+                <div class="field-group field-number">
+                    <label for="encl_separator">Anlagen-Trennzeichen</label>
+                    <input id="encl_separator" name="encl_separator" type="text" value="{{ form_data.get('encl_separator', ': ') }}">
+                    {% if errors.get('encl_separator') %}<p class="error">{{ errors['encl_separator'] }}</p>{% endif %}
+                </div>
+            </div>
         </section>
 
         <section>
             <h2>Dateiname</h2>
 
-            <label for="filename_date_hint">1. Datum</label>
-            <input id="filename_date_hint" type="text" value="{{ form_data.get('date_iso', today_iso) }}" readonly>
+            <div class="field-row field-row-date-filename">
+                <div class="field-group field-date-short">
+                    <label for="filename_date_hint">Datum</label>
+                    <input id="filename_date_hint" type="text" value="{{ form_data.get('date_iso', today_iso) }}" readonly>
+                </div>
+                <div class="field-group field-grow">
+                    <label for="filename_addressee">Empfänger</label>
+                    <input
+                        id="filename_addressee"
+                        name="filename_addressee"
+                        type="text"
+                        value="{{ form_data.get('filename_addressee', '') }}"
+                        placeholder="Vorschlag aus dem Nachnamen des Empfängers"
+                    >
+                    {% if errors.get('filename_addressee') %}<p class="error">{{ errors['filename_addressee'] }}</p>{% endif %}
+                </div>
+            </div>
 
-            <label for="filename_addressee">2. Empfänger</label>
-            <input
-                id="filename_addressee"
-                name="filename_addressee"
-                type="text"
-                value="{{ form_data.get('filename_addressee', '') }}"
-                placeholder="Vorschlag aus dem Nachnamen des Empfängers"
-            >
-            {% if errors.get('filename_addressee') %}<p class="error">{{ errors['filename_addressee'] }}</p>{% endif %}
-
-            <label for="filename_preview">Dateiname</label>
-            <input id="filename_preview" type="text" readonly>
+            <label>Dateiname</label>
+            <p id="filename_preview" class="derived-value"></p>
         </section>
 
         <button type="submit">PDF erzeugen</button>

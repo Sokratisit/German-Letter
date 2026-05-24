@@ -30,7 +30,7 @@
         }
         const datePart = filenameDateHint.value.trim() || "YYYY-MM-DD";
         const addresseePart = filenameAddresseeField.value.trim() || "Empfänger";
-        filenamePreviewField.value = `${datePart} ${addresseePart}.pdf`;
+        filenamePreviewField.textContent = `${datePart} ${addresseePart}.pdf`;
     };
 
     const syncFilenameSuggestion = () => {

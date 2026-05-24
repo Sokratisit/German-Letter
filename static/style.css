@@ -70,6 +70,10 @@ section {
     grid-template-columns: 160px minmax(0, 1fr);
 }
 
+.field-row-date-filename {
+    grid-template-columns: 180px minmax(0, 1fr);
+}
+
 .field-group label {
     margin-top: 0;
 }
@@ -107,6 +111,29 @@ textarea {
     border: 1px solid #bac4d6;
     border-radius: 6px;
     font: inherit;
+}
+
+.highlighted-field {
+    border-color: #8eb6f4;
+    background: #eef5ff;
+}
+
+.highlighted-field:focus {
+    outline: 2px solid #77a6ef;
+    outline-offset: 1px;
+    background: #f7fbff;
+}
+
+.derived-value {
+    margin: 0;
+    padding: 0.7rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #f7f9fc;
+    color: #425066;
+    min-height: 2.7rem;
+    display: flex;
+    align-items: center;
 }
 
 button,
@@ -148,7 +175,8 @@ button,
     .field-row-3,
     .field-row-2,
     .field-row-street,
-    .field-row-city {
+    .field-row-city,
+    .field-row-date-filename {
         grid-template-columns: 1fr;
     }
 }
