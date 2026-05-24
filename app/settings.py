@@ -13,7 +13,8 @@ class AppSettings:
     templates_dir: Path
     static_dir: Path
     secret_key: str
-    pdflatex_bin: str
+    latex_bin: str
+    latex_font_family: str
     pandoc_bin: str
     latex_use_docker: bool
     docker_image: str
@@ -31,7 +32,8 @@ class AppSettings:
             templates_dir=base_dir / "templates",
             static_dir=base_dir / "static",
             secret_key=os.getenv("LETTER_APP_SECRET_KEY", "dev-only-change-me"),
-            pdflatex_bin=os.getenv("LETTER_APP_PDFLATEX_BIN", "pdflatex"),
+            latex_bin=os.getenv("LETTER_APP_LATEX_BIN") or os.getenv("LETTER_APP_PDFLATEX_BIN", "lualatex"),
+            latex_font_family=os.getenv("LETTER_APP_LATEX_FONT_FAMILY", "TeX Gyre Heros"),
             pandoc_bin=os.getenv("LETTER_APP_PANDOC_BIN", "pandoc"),
             latex_use_docker=os.getenv("LETTER_APP_LATEX_USE_DOCKER", "true").lower() == "true",
             docker_image=os.getenv("LETTER_APP_DOCKER_IMAGE", "blang/latex:ctanfull"),

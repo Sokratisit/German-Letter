@@ -75,6 +75,11 @@ def _letter_data() -> LetterFormData:
 def test_template_contains_expected_scrlttr2_sections() -> None:
     tex = build_letter_tex(_letter_data())
     assert r"\documentclass[paper=a4,fontsize=11pt]{scrlttr2}" in tex
+    assert r"\usepackage{fontspec}" in tex
+    assert r"\setmainfont{TeX Gyre Heros}" in tex
+    assert r"\setsansfont{TeX Gyre Heros}" in tex
+    assert r"\renewcommand{\familydefault}{\sfdefault}" in tex
+    assert r"\AtBeginDocument{\sffamily}" in tex
     assert (
         r"\KOMAoptions{parskip=half,subject=beforeopening,subject=titled,fromphone=true,frommobilephone=true,fromfax=true,fromemail=true,fromurl=true,fromlogo=false}"
         in tex

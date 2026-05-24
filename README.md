@@ -19,7 +19,7 @@ It is intended as a practical letter-writing tool rather than a generic LaTeX ed
 
 - Python 3.10
 - Flask
-- LaTeX `pdflatex`
+- LaTeX engine (`lualatex` recommended)
 - `uv` for local dependency management
 - `pytest`
 
@@ -105,6 +105,7 @@ By default, it looks for:
 ```text
 docker
 pandoc
+lualatex
 ```
 
 If necessary, the binary path can be configured with an environment variable.
@@ -114,7 +115,9 @@ If necessary, the binary path can be configured with an environment variable.
 Supported environment variables:
 
 - `LETTER_APP_SECRET_KEY`
-- `LETTER_APP_PDFLATEX_BIN`
+- `LETTER_APP_LATEX_BIN` (default: `lualatex`)
+- `LETTER_APP_LATEX_FONT_FAMILY` (default: `TeX Gyre Heros`)
+- `LETTER_APP_PDFLATEX_BIN` (legacy fallback variable name)
 - `LETTER_APP_PANDOC_BIN`
 - `LETTER_APP_LATEX_USE_DOCKER` (default: `true`)
 - `LETTER_APP_DOCKER_BIN` (default: `docker`)

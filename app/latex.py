@@ -164,7 +164,7 @@ def _resolve_body_latex(data: LetterFormData, *, pandoc_bin: str) -> str:
     return convert_markdown_to_latex(data.body, pandoc_bin=pandoc_bin)
 
 
-def build_letter_tex(data: LetterFormData, *, pandoc_bin: str = "pandoc") -> str:
+def build_letter_tex(data: LetterFormData, *, pandoc_bin: str = "pandoc", font_family: str = "TeX Gyre Heros") -> str:
     logger.debug("build_letter_tex called; body_mode=%s", data.body_mode)
     sender_line = _sender_address_lines(data)
     recipient_line = _recipient_address_lines(data)
@@ -190,8 +190,11 @@ def build_letter_tex(data: LetterFormData, *, pandoc_bin: str = "pandoc") -> str
 
     lines = [
         r"\documentclass[paper=a4,fontsize=11pt]{scrlttr2}",
-        r"\usepackage[T1]{fontenc}",
-        r"\usepackage[utf8]{inputenc}",
+        r"\usepackage{fontspec}",
+        rf"\setmainfont{{{escape_latex(font_family)}}}",
+        rf"\setsansfont{{{escape_latex(font_family)}}}",
+        r"\renewcommand{\familydefault}{\sfdefault}",
+        r"\AtBeginDocument{\sffamily}",
         rf"\KOMAoptions{{{koma_options}}}",
         r"\setlength{\parindent}{0pt}",
         rf"\setkomavar{{fromname}}{{{escape_latex(data.sender_display_name)}}}",
@@ -288,7 +291,8 @@ def _sanitize_filename_component(value: str) -> str:
 def render_letter_pdf(
     data: LetterFormData,
     *,
-    pdflatex_bin: str = "pdflatex",
+    latex_bin: str = "lualatex",
+    font_family: str = "TeX Gyre Heros",
     pandoc_bin: str = "pandoc",
     use_docker: bool = True,
     docker_bin: str = "docker",
@@ -305,12 +309,13 @@ def render_letter_pdf(
     with tempfile.TemporaryDirectory(prefix="letter-app-") as tmp_name:
         tmp_dir = Path(tmp_name)
         stem = tmp_dir / "letter"
-        tex_path = write_tex_file(build_letter_tex(data, pandoc_bin=pandoc_bin), stem.with_suffix(".tex"))
+        tex_path = write_tex_file(build_letter_tex(data, pandoc_bin=pandoc_bin, font_family=font_family), stem.with_suffix(".tex"))
 
         if use_docker:
             result = _run_pdflatex_in_docker(
                 tmp_dir=tmp_dir,
                 tex_filename=tex_path.name,
+                latex_bin=latex_bin,
                 docker_bin=docker_bin,
                 docker_image=docker_image,
                 timeout_seconds=timeout_seconds,
@@ -319,7 +324,7 @@ def render_letter_pdf(
             result = _run_pdflatex_locally(
                 tmp_dir=tmp_dir,
                 tex_filename=tex_path.name,
-                pdflatex_bin=pdflatex_bin,
+                latex_bin=latex_bin,
                 timeout_seconds=timeout_seconds,
             )
         if result.returncode != 0:
@@ -327,12 +332,30 @@ def render_letter_pdf(
                 message = _docker_error_message(result.stderr, result.stdout)
             else:
                 message = _latex_error_message(result.stderr or result.stdout)
+            if "Transcript written on letter.log." in message:
+                log_details = _read_latex_log_error(tmp_dir / "letter.log")
+                if log_details:
+                    message = log_details
             logger.error("LaTeX build failed; returncode=%s message=%s", result.returncode, message)
             raise LatexBuildError(f"LaTeX build failed: {message}")
 
         pdf_path = stem.with_suffix(".pdf")
         if not pdf_path.exists():
-            raise LatexCompileError("Compilation reported success but no PDF was produced.")
+            discovered_pdfs = sorted(tmp_dir.glob("*.pdf"))
+            if len(discovered_pdfs) == 1:
+                pdf_path = discovered_pdfs[0]
+                logger.debug("Expected PDF missing; using discovered PDF: %s", pdf_path)
+            elif len(discovered_pdfs) > 1:
+                pdf_path = discovered_pdfs[0]
+                logger.debug(
+                    "Expected PDF missing; multiple PDFs discovered, using first: %s all=%s",
+                    pdf_path,
+                    [str(path.name) for path in discovered_pdfs],
+                )
+            else:
+                files = sorted(path.name for path in tmp_dir.iterdir())
+                logger.error("No PDF produced; tmp_dir contents: %s", files)
+                raise LatexCompileError("Compilation reported success but no PDF was produced.")
         pdf_bytes = pdf_path.read_bytes()
         _cleanup_auxiliary_files(stem)
 
@@ -347,12 +370,12 @@ def _run_pdflatex_locally(
     *,
     tmp_dir: Path,
     tex_filename: str,
-    pdflatex_bin: str,
+    latex_bin: str,
     timeout_seconds: int,
 ):
-    logger.debug("_run_pdflatex_locally called; tmp_dir=%s pdflatex_bin=%s", tmp_dir, pdflatex_bin)
+    logger.debug("_run_pdflatex_locally called; tmp_dir=%s latex_bin=%s", tmp_dir, latex_bin)
     cmd = [
-        pdflatex_bin,
+        latex_bin,
         "-interaction=nonstopmode",
         "-halt-on-error",
         tex_filename,
@@ -375,6 +398,7 @@ def _run_pdflatex_in_docker(
     *,
     tmp_dir: Path,
     tex_filename: str,
+    latex_bin: str,
     docker_bin: str,
     docker_image: str,
     timeout_seconds: int,
@@ -387,6 +411,8 @@ def _run_pdflatex_in_docker(
         "--network",
         "none",
         "--read-only",
+        "--tmpfs",
+        "/tmp:rw,nosuid,nodev,size=64m",
         "--cap-drop",
         "ALL",
         "--pids-limit",
@@ -397,12 +423,20 @@ def _run_pdflatex_in_docker(
         "0.5",
         "--user",
         "65534:65534",
+        "-e",
+        "HOME=/work",
+        "-e",
+        "TEXMFHOME=/work/.texmf-home",
+        "-e",
+        "TEXMFVAR=/work/.texmf-var",
+        "-e",
+        "TEXMFCONFIG=/work/.texmf-config",
         "-v",
         f"{tmp_dir}:/work",
         "-w",
         "/work",
         docker_image,
-        "pdflatex",
+        latex_bin,
         "-interaction=nonstopmode",
         "-halt-on-error",
         tex_filename,
@@ -457,6 +491,20 @@ def _docker_error_message(stderr: str, stdout: str) -> str:
             return lines[-1]
 
     return "Docker run failed without output."
+
+
+def _read_latex_log_error(log_path: Path) -> str:
+    logger.debug("_read_latex_log_error called; log_path=%s", log_path)
+    if not log_path.exists():
+        return ""
+
+    text = log_path.read_text(encoding="utf-8", errors="replace")
+    message = _latex_error_message(text)
+    if message and message != "Unknown LaTeX error.":
+        return message
+
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    return lines[-1] if lines else ""
 
 
 def _separator_label(value: str, fallback: str) -> str:

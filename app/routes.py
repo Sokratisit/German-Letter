@@ -176,7 +176,8 @@ def generate() -> tuple[str, int] | str:
     try:
         filename, pdf_bytes = render_letter_pdf(
             validated,
-            pdflatex_bin=current_app.config["PDFLATEX_BIN"],
+            latex_bin=current_app.config["LATEX_BIN"],
+            font_family=current_app.config["LATEX_FONT_FAMILY"],
             pandoc_bin=current_app.config["PANDOC_BIN"],
             use_docker=current_app.config["LATEX_USE_DOCKER"],
             docker_bin=current_app.config["DOCKER_BIN"],

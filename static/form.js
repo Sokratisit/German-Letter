@@ -169,6 +169,48 @@
         if (!isValid) {
             event.preventDefault();
             form.reportValidity();
+            return;
         }
+
+        event.preventDefault();
+        submitFormAsDownload();
     });
+
+    const submitFormAsDownload = async () => {
+        const formData = new FormData(form);
+        const actionUrl = form.getAttribute("action") || "/generate";
+
+        try {
+            const response = await fetch(actionUrl, {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin",
+            });
+
+            const contentType = response.headers.get("content-type") || "";
+            if (response.ok && contentType.includes("application/pdf")) {
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                const contentDisposition = response.headers.get("content-disposition") || "";
+                const filenameMatch = contentDisposition.match(/filename\*?=(?:UTF-8''|")?([^";\r\n]+)/i);
+                const filename = filenameMatch ? decodeURIComponent(filenameMatch[1].replace(/"/g, "")) : "letter.pdf";
+
+                const link = document.createElement("a");
+                link.href = objectUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(objectUrl);
+                return;
+            }
+
+            const html = await response.text();
+            document.open();
+            document.write(html);
+            document.close();
+        } catch (_err) {
+            form.submit();
+        }
+    };
 })();
