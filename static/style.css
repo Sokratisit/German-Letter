@@ -32,6 +32,23 @@ h1 {
     margin-top: 0;
 }
 
+.meta-links {
+    margin: -0.35rem 0 1.25rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.subtle-link {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 0.14rem;
+}
+
+.subtle-link:hover {
+    color: #3d4c65;
+}
+
 form {
     display: grid;
     gap: 1.25rem;
@@ -169,6 +186,15 @@ button,
     background: #e7f7ec;
     color: #1d6b34;
     font-weight: 600;
+}
+
+.info-page section + section {
+    margin-top: 1rem;
+}
+
+.info-page p,
+.info-page li {
+    line-height: 1.5;
 }
 
 @media (max-width: 720px) {

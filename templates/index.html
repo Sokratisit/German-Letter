@@ -11,6 +11,10 @@
 <body>
 <main class="container">
     <h1>Brief erstellen</h1>
+    <p class="meta-links">
+        <a class="subtle-link" href="{{ url_for('main.terms') }}">Nutzungsbedingungen</a>
+        <a class="subtle-link" href="{{ url_for('main.faq') }}">FAQ</a>
+    </p>
 
     {% if success_message %}
     <p class="success-banner">{{ success_message }}</p>

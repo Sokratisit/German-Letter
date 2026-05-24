@@ -19,3 +19,4 @@ letters.db
 *.fls
 *.fdb_latexmk
 update_github.bat
+testing/

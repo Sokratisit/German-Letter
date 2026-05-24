@@ -172,7 +172,7 @@ def build_letter_tex(data: LetterFormData) -> str:
         (
             r"\begin{document}",
             r"\begin{letter}{" + recipient_line + "}",
-            r"\opening{" + escape_latex(data.opening) + "}",
+            r"\opening{" + _nonempty_letter_field(data.opening) + "}",
             body_block,
             r"\closing{" + escape_latex(data.closing) + "}",
         )
@@ -300,3 +300,7 @@ def _latex_separator(separator: str) -> str:
         else:
             parts.append(escape_latex(char))
     return "".join(parts)
+
+
+def _nonempty_letter_field(value: str) -> str:
+    return escape_latex(value) if value else "~"

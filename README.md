@@ -41,6 +41,8 @@ Brief/
         style.css
     templates/
         index.html
+        faq.html
+        terms.html
     tests/
         test_latex_escape.py
         test_routes.py
@@ -81,6 +83,8 @@ Run the test suite with:
 ```bash
 uv run pytest --basetemp .pytest-tmp
 ```
+
+Local one-off helper scripts for manual deployment or endpoint testing can be kept in a `testing/` folder. That folder is excluded from Git and is not intended for GitHub or PythonAnywhere deployment.
 
 ## Requirements
 

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FAQ</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="container info-page">
+    <p><a class="subtle-link" href="{{ url_for('main.index') }}">Zurück zur Briefseite</a></p>
+    <h1>FAQ</h1>
+
+    <section>
+        <h2>Speichert die Seite meine Eingaben?</h2>
+        <p>Nach dem beabsichtigten Verhalten der Anwendung nein. Die Eingaben werden zur PDF-Erzeugung verarbeitet, aber nicht dauerhaft von der Anwendung selbst gespeichert.</p>
+    </section>
+
+    <section>
+        <h2>Wird das erzeugte PDF auf dem Server gespeichert?</h2>
+        <p>Nein. Das PDF wird direkt als Download an den Browser ausgeliefert. Eine dauerhafte Ablage durch die Anwendung ist nicht vorgesehen.</p>
+    </section>
+
+    <section>
+        <h2>Was machen die beiden Optionen „Speichern“?</h2>
+        <p>Sie speichern Absender- oder Empfängerdaten lokal im Browser per Cookie. Dadurch werden diese Felder beim nächsten Aufruf der Seite automatisch vorausgefüllt.</p>
+    </section>
+
+    <section>
+        <h2>Werden diese gespeicherten Daten extern übertragen?</h2>
+        <p>Die Cookie-Daten selbst sind für die lokale Speicherung im Browser gedacht. Es ist keine separate externe Datenbank oder Cloud-Speicherung durch die Anwendung vorgesehen.</p>
+    </section>
+
+    <section>
+        <h2>Was ist mit PythonAnywhere?</h2>
+        <p>Die Seite läuft auf PythonAnywhere. Ob und in welchem Umfang dort technische Logs oder Plattformdaten entstehen, ist hier nicht verbindlich bekannt.</p>
+    </section>
+
+    <section>
+        <h2>Warum wurde kein PDF erzeugt?</h2>
+        <p>Typische Ursachen sind unvollständige Eingaben, problematische Zeichen in Feldern oder ein LaTeX-Fehler. In solchen Fällen zeigt die Seite oben eine Fehlermeldung an.</p>
+    </section>
+
+    <section>
+        <h2>Welche Felder sind besonders wichtig?</h2>
+        <p>In der Oberfläche hervorgehobene Felder sind meist die praktisch wichtigsten Angaben für einen brauchbaren Brief, etwa Name, Adresse, Anrede, Text, Grußformel, Unterschrift und Ort.</p>
+    </section>
+
+    <section>
+        <h2>Ist der erzeugte Brief rechtlich geprüft?</h2>
+        <p>Nein. Die Anwendung hilft bei der Formatierung, ersetzt aber keine rechtliche oder fachliche Prüfung des Inhalts.</p>
+    </section>
+</main>
+</body>
+</html>

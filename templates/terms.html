@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nutzungsbedingungen</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="container info-page">
+    <p><a class="subtle-link" href="{{ url_for('main.index') }}">Zurück zur Briefseite</a></p>
+    <h1>Nutzungsbedingungen</h1>
+
+    <section>
+        <h2>1. Zweck der Seite</h2>
+        <p>Diese Seite dient dazu, Briefdaten in ein PDF im Stil von <code>scrlttr2</code> umzuwandeln. Die Nutzung erfolgt ohne Gewähr für rechtliche, formale oder inhaltliche Vollständigkeit.</p>
+    </section>
+
+    <section>
+        <h2>2. Speicherung auf dieser Seite</h2>
+        <p>Nach dem beabsichtigten Verhalten dieser Anwendung werden weder die eingegebenen Daten noch das erzeugte PDF dauerhaft durch die Anwendung selbst gespeichert. Das PDF wird direkt zum Download ausgeliefert.</p>
+    </section>
+
+    <section>
+        <h2>3. Cookies</h2>
+        <p>Die beiden Optionen <strong>Speichern</strong> unter <strong>Absender</strong> und <strong>Empfänger</strong> speichern diese Daten ausschließlich lokal im Browser über Cookies. Es findet dabei keine externe Speicherung durch die Anwendung statt.</p>
+    </section>
+
+    <section>
+        <h2>4. Hosting durch PythonAnywhere</h2>
+        <p>Die Anwendung läuft auf PythonAnywhere. Es ist nicht bekannt, welche technischen Protokolle, Logs oder Zwischenspeicher dort auf Plattformebene geführt werden. Dazu kann keine verbindliche Aussage gemacht werden.</p>
+    </section>
+
+    <section>
+        <h2>5. Eigenverantwortung</h2>
+        <p>Bitte prüfen Sie erzeugte Briefe vor dem Versand selbst. Das gilt insbesondere für Adressen, Datumsangaben, Anlagen, Verteiler, rechtliche Inhalte und die Einhaltung formaler Anforderungen.</p>
+    </section>
+</main>
+</body>
+</html>

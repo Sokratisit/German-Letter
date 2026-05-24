@@ -165,3 +165,9 @@ def test_body_uses_blank_lines_as_paragraph_breaks() -> None:
     )
     tex = build_letter_tex(data)
     assert "Erste Zeile\\\\ Zweite Zeile\n\nDritter Absatz" in tex
+
+
+def test_empty_opening_uses_safe_placeholder() -> None:
+    data = replace(_letter_data(), opening="")
+    tex = build_letter_tex(data)
+    assert r"\opening{~}" in tex

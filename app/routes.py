@@ -70,6 +70,16 @@ def index() -> str:
     )
 
 
+@bp.get("/bedingungen")
+def terms() -> str:
+    return render_template("terms.html")
+
+
+@bp.get("/faq")
+def faq() -> str:
+    return render_template("faq.html")
+
+
 @bp.post("/generate")
 def generate() -> tuple[str, int] | str:
     form_data = normalize_form_input(dict(request.form.items()))
