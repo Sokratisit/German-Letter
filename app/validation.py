@@ -13,6 +13,12 @@ MAX_LENGTHS: dict[str, int] = {
     "sender_street_number": 30,
     "sender_postal_code": 20,
     "sender_city": 120,
+    "sender_custom_1_key": 120,
+    "sender_custom_1_value": 300,
+    "sender_custom_2_key": 120,
+    "sender_custom_2_value": 300,
+    "sender_custom_3_key": 120,
+    "sender_custom_3_value": 300,
     "sender_phone": 120,
     "sender_mobile_phone": 120,
     "sender_fax": 120,
@@ -62,6 +68,12 @@ class LetterFormData:
     sender_street_number: str
     sender_postal_code: str
     sender_city: str
+    sender_custom_1_key: str
+    sender_custom_1_value: str
+    sender_custom_2_key: str
+    sender_custom_2_value: str
+    sender_custom_3_key: str
+    sender_custom_3_value: str
     sender_phone: str
     sender_mobile_phone: str
     sender_fax: str
@@ -147,6 +159,12 @@ def validate_letter_form(
             sender_street_number=cleaned["sender_street_number"],
             sender_postal_code=cleaned["sender_postal_code"],
             sender_city=cleaned["sender_city"],
+            sender_custom_1_key=cleaned["sender_custom_1_key"],
+            sender_custom_1_value=cleaned["sender_custom_1_value"],
+            sender_custom_2_key=cleaned["sender_custom_2_key"],
+            sender_custom_2_value=cleaned["sender_custom_2_value"],
+            sender_custom_3_key=cleaned["sender_custom_3_key"],
+            sender_custom_3_value=cleaned["sender_custom_3_value"],
             sender_phone=cleaned["sender_phone"],
             sender_mobile_phone=cleaned["sender_mobile_phone"],
             sender_fax=cleaned["sender_fax"],
@@ -217,6 +235,12 @@ def _label_for_field(key: str) -> str:
         "sender_street_number": "Absender Nummer",
         "sender_postal_code": "Absender PLZ",
         "sender_city": "Absender Ort",
+        "sender_custom_1_key": "Absender Zusatzschlüssel 1",
+        "sender_custom_1_value": "Absender Zusatzwert 1",
+        "sender_custom_2_key": "Absender Zusatzschlüssel 2",
+        "sender_custom_2_value": "Absender Zusatzwert 2",
+        "sender_custom_3_key": "Absender Zusatzschlüssel 3",
+        "sender_custom_3_value": "Absender Zusatzwert 3",
         "sender_phone": "Absender Telefon",
         "sender_mobile_phone": "Absender Mobiltelefon",
         "sender_fax": "Absender Fax",

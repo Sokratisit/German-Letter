@@ -71,6 +71,7 @@ def _sender_address_lines(data: LetterFormData) -> str:
         data.sender_extra,
         _join_non_empty((data.sender_street, data.sender_street_number)),
         _join_non_empty((data.sender_postal_code, data.sender_city)),
+        *_sender_custom_lines(data),
     )
 
 
@@ -94,6 +95,24 @@ def _abbreviated_name(title: str, first_name: str, last_name: str) -> str:
 
 def _join_non_empty(values: tuple[str, ...]) -> str:
     return " ".join(value for value in values if value)
+
+
+def _sender_custom_lines(data: LetterFormData) -> tuple[str, ...]:
+    return tuple(
+        line
+        for line in (
+            _custom_line(data.sender_custom_1_key, data.sender_custom_1_value),
+            _custom_line(data.sender_custom_2_key, data.sender_custom_2_value),
+            _custom_line(data.sender_custom_3_key, data.sender_custom_3_value),
+        )
+        if line
+    )
+
+
+def _custom_line(label: str, value: str) -> str:
+    if label and value:
+        return f"{label}: {value}"
+    return label or value
 
 
 def _option_bool(value: str) -> str:
@@ -168,15 +187,14 @@ def build_letter_tex(data: LetterFormData) -> str:
     if data.sender_logo:
         lines.append(r"\setkomavar{fromlogo}{" + data.sender_logo + "}")
 
-    lines.extend(
-        (
-            r"\begin{document}",
-            r"\begin{letter}{" + recipient_line + "}",
-            r"\opening{" + _nonempty_letter_field(data.opening) + "}",
-            body_block,
-            r"\closing{" + escape_latex(data.closing) + "}",
-        )
-    )
+    lines.extend((r"\begin{document}", r"\begin{letter}{" + recipient_line + "}"))
+
+    if data.opening:
+        lines.append(r"\opening{" + escape_latex(data.opening) + "}")
+    else:
+        lines.append(r"\par")
+
+    lines.extend((body_block, r"\closing{" + escape_latex(data.closing) + "}"))
 
     if data.ps:
         lines.append(r"\ps " + escape_latex(data.ps))
@@ -301,6 +319,3 @@ def _latex_separator(separator: str) -> str:
             parts.append(escape_latex(char))
     return "".join(parts)
 
-
-def _nonempty_letter_field(value: str) -> str:
-    return escape_latex(value) if value else "~"

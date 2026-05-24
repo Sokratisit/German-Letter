@@ -20,6 +20,12 @@ def _letter_data() -> LetterFormData:
         sender_street_number="1",
         sender_postal_code="12345",
         sender_city="Berlin",
+        sender_custom_1_key="Yahoo",
+        sender_custom_1_value="some_username",
+        sender_custom_2_key="Matrix",
+        sender_custom_2_value="neo",
+        sender_custom_3_key="",
+        sender_custom_3_value="",
         sender_phone="030 123456",
         sender_mobile_phone="0171 2345678",
         sender_fax="030 654321",
@@ -69,7 +75,10 @@ def test_template_contains_expected_scrlttr2_sections() -> None:
     )
     assert r"\setlength{\parindent}{0pt}" in tex
     assert r"\setkomavar{fromname}{Dr. Max Mustermann}" in tex
-    assert r"\setkomavar{fromaddress}{2. Etage\\ Musterweg 1\\ 12345 Berlin}" in tex
+    assert (
+        r"\setkomavar{fromaddress}{2. Etage\\ Musterweg 1\\ 12345 Berlin\\ Yahoo: some\_username\\ Matrix: neo}"
+        in tex
+    )
     assert r"\setkomavar{backaddressseparator}{, }" in tex
     assert r"\setkomavar{backaddress}{Dr. M. Mustermann, 2. Etage, Musterweg 1, 12345 Berlin}" in tex
     assert r"\setkomavar*{fromphone}{Telefon: }" in tex
@@ -170,4 +179,5 @@ def test_body_uses_blank_lines_as_paragraph_breaks() -> None:
 def test_empty_opening_uses_safe_placeholder() -> None:
     data = replace(_letter_data(), opening="")
     tex = build_letter_tex(data)
-    assert r"\opening{~}" in tex
+    assert r"\opening{" not in tex
+    assert r"\par" in tex

@@ -13,6 +13,12 @@ def _valid_payload() -> dict[str, str]:
         "sender_street_number": "1",
         "sender_postal_code": "12345",
         "sender_city": "Berlin",
+        "sender_custom_1_key": "Yahoo",
+        "sender_custom_1_value": "some_username",
+        "sender_custom_2_key": "",
+        "sender_custom_2_value": "",
+        "sender_custom_3_key": "",
+        "sender_custom_3_value": "",
         "sender_phone": "030 123456",
         "sender_mobile_phone": "0171 2345678",
         "sender_fax": "030 654321",
@@ -107,7 +113,9 @@ def test_index_prefers_query_parameters_over_cookies_per_field() -> None:
     client.set_cookie("letter_sender", json.dumps({"sender_last_name": "CookieName", "sender_city": "Köln"}))
     client.set_cookie("letter_recipient", json.dumps({"recipient_last_name": "CookieRecipient", "recipient_city": "Hamburg"}))
 
-    response = client.get("/?from_name_last=QueryName&to_name_last=QueryRecipient&place=Berlin")
+    response = client.get(
+        "/?from_name_last=QueryName&to_name_last=QueryRecipient&place=Berlin&fromcustom1key=Yahoo"
+    )
 
     body = response.get_data(as_text=True)
     assert response.status_code == 200
@@ -120,3 +128,4 @@ def test_index_prefers_query_parameters_over_cookies_per_field() -> None:
     assert 'name="recipient_city" type="text"' in body
     assert 'value="Hamburg"' in body
     assert 'name="place" type="text" value="Berlin"' in body
+    assert 'name="sender_custom_1_key" type="text" value="Yahoo"' in body

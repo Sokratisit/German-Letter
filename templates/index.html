@@ -76,6 +76,45 @@
                 </div>
             </div>
 
+            <div class="field-row field-row-street">
+                <div class="field-group field-postal">
+                    <label for="sender_custom_1_key">Zusatzschlüssel 1</label>
+                    <input id="sender_custom_1_key" name="sender_custom_1_key" type="text" value="{{ form_data.get('sender_custom_1_key', '') }}">
+                    {% if errors.get('sender_custom_1_key') %}<p class="error">{{ errors['sender_custom_1_key'] }}</p>{% endif %}
+                </div>
+                <div class="field-group field-grow">
+                    <label for="sender_custom_1_value">Zusatzwert 1</label>
+                    <input id="sender_custom_1_value" name="sender_custom_1_value" type="text" value="{{ form_data.get('sender_custom_1_value', '') }}">
+                    {% if errors.get('sender_custom_1_value') %}<p class="error">{{ errors['sender_custom_1_value'] }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="field-row field-row-street">
+                <div class="field-group field-postal">
+                    <label for="sender_custom_2_key">Zusatzschlüssel 2</label>
+                    <input id="sender_custom_2_key" name="sender_custom_2_key" type="text" value="{{ form_data.get('sender_custom_2_key', '') }}">
+                    {% if errors.get('sender_custom_2_key') %}<p class="error">{{ errors['sender_custom_2_key'] }}</p>{% endif %}
+                </div>
+                <div class="field-group field-grow">
+                    <label for="sender_custom_2_value">Zusatzwert 2</label>
+                    <input id="sender_custom_2_value" name="sender_custom_2_value" type="text" value="{{ form_data.get('sender_custom_2_value', '') }}">
+                    {% if errors.get('sender_custom_2_value') %}<p class="error">{{ errors['sender_custom_2_value'] }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="field-row field-row-street">
+                <div class="field-group field-postal">
+                    <label for="sender_custom_3_key">Zusatzschlüssel 3</label>
+                    <input id="sender_custom_3_key" name="sender_custom_3_key" type="text" value="{{ form_data.get('sender_custom_3_key', '') }}">
+                    {% if errors.get('sender_custom_3_key') %}<p class="error">{{ errors['sender_custom_3_key'] }}</p>{% endif %}
+                </div>
+                <div class="field-group field-grow">
+                    <label for="sender_custom_3_value">Zusatzwert 3</label>
+                    <input id="sender_custom_3_value" name="sender_custom_3_value" type="text" value="{{ form_data.get('sender_custom_3_value', '') }}">
+                    {% if errors.get('sender_custom_3_value') %}<p class="error">{{ errors['sender_custom_3_value'] }}</p>{% endif %}
+                </div>
+            </div>
+
             <div class="field-row field-row-2">
                 <div class="field-group">
                     <label for="sender_phone">Telefon</label>
