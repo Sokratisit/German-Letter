@@ -11,6 +11,9 @@
     const filenamePreviewField = field("filename_preview");
     const filenameAddresseeField = field("filename_addressee");
     const signatureField = field("signature");
+    const bodyModeMarkdownField = field("body_mode_markdown");
+    const bodyModeLatexField = field("body_mode_latex");
+    const bodyModeHelp = field("body-mode-help");
 
     const senderTitleField = field("sender_title");
     const senderFirstNameField = field("sender_first_name");
@@ -73,6 +76,35 @@
         filenamePreviewField.textContent = `${datePart} ${addresseePart}.pdf`;
     };
 
+    const MARKDOWN_HELP_HTML = [
+        "<p><strong>Kursiv</strong> <code>*Text*</code></p>",
+        "<p><strong>Fett</strong> <code>**Text**</code></p>",
+        "<p><strong>Umbruch</strong> Zeile mit zwei Leerzeichen beenden</p>",
+        "<p><strong>Absatz</strong> Leerzeile</p>",
+        "<p><strong>Liste (unsortiert)</strong> <code>- Punkt</code></p>",
+        "<p><strong>Liste (sortiert)</strong> <code>1. Punkt</code></p>",
+    ].join("");
+
+    const LATEX_HELP_HTML = [
+        "<p><strong>Kursiv</strong> <code>\\textit{Text}</code></p>",
+        "<p><strong>Fett</strong> <code>\\textbf{Text}</code></p>",
+        "<p><strong>Umbruch</strong> <code>\\\\</code> am Zeilenende</p>",
+        "<p><strong>Absatz</strong> Leerzeile</p>",
+        "<p><strong>Liste (unsortiert)</strong></p>",
+        "<pre><code>\\begin{itemize}\n  \\item Punkt eins\n  \\item Punkt zwei\n\\end{itemize}</code></pre>",
+        "<p><strong>Liste (sortiert)</strong></p>",
+        "<pre><code>\\begin{enumerate}\n  \\item Punkt eins\n  \\item Punkt zwei\n\\end{enumerate}</code></pre>",
+    ].join("");
+
+    const syncBodyModeHelp = () => {
+        if (!bodyModeHelp) {
+            return;
+        }
+        bodyModeHelp.innerHTML = bodyModeLatexField && bodyModeLatexField.checked
+            ? LATEX_HELP_HTML
+            : MARKDOWN_HELP_HTML;
+    };
+
     const syncFilenameSuggestion = () => {
         if (!recipientLastNameField || !filenameAddresseeField) {
             return;
@@ -132,6 +164,13 @@
     }
 
     syncFilenamePreview();
+    syncBodyModeHelp();
+
+    [bodyModeMarkdownField, bodyModeLatexField].forEach((element) => {
+        if (element) {
+            element.addEventListener("change", syncBodyModeHelp);
+        }
+    });
 
     const moveTrailingHouseNumber = (streetField, numberField) => {
         if (!streetField || !numberField) {

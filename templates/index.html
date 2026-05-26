@@ -267,7 +267,7 @@
                 </div>
                 <div class="field-group">
                     <label for="date_iso">Datum</label>
-                    <input class="highlighted-field" id="date_iso" name="date_iso" type="text" inputmode="numeric" placeholder="dd.mm.yyyy" value="{{ form_data.get('date_iso', '') }}">
+                    <input class="highlighted-field" id="date_iso" name="date_iso" type="text" inputmode="numeric" placeholder="tt.mm.jjjj" value="{{ form_data.get('date_iso', '') }}">
                     {% if errors.get('date_iso') %}<p class="error">{{ errors['date_iso'] }}</p>{% endif %}
                 </div>
             </div>
@@ -302,7 +302,6 @@
                 <label class="radio-label">
                     <input id="body_mode_markdown" name="body_mode" type="radio" value="markdown" {% if form_data.get('body_mode', 'markdown') != 'latex' %}checked{% endif %}>
                     Markdown
-                    <a class="subtle-link inline-help-link" href="{{ url_for('main.markdown_guide') }}">Anleitung</a>
                 </label>
                 <label class="radio-label">
                     <input id="body_mode_latex" name="body_mode" type="radio" value="latex" {% if form_data.get('body_mode') == 'latex' %}checked{% endif %}>
@@ -311,9 +310,16 @@
             </fieldset>
 
             <label for="body">Text</label>
-            <textarea class="highlighted-field" id="body" name="body" rows="8">{{ form_data.get('body', '') }}</textarea>
-            {% if errors.get('body') %}<p class="error">{{ errors['body'] }}</p>{% endif %}
-            {% if errors.get('body_mode') %}<p class="error">{{ errors['body_mode'] }}</p>{% endif %}
+            <div class="body-editor-layout">
+                <div class="body-editor-main">
+                    <textarea class="highlighted-field" id="body" name="body" rows="8">{{ form_data.get('body', '') }}</textarea>
+                    {% if errors.get('body') %}<p class="error">{{ errors['body'] }}</p>{% endif %}
+                    {% if errors.get('body_mode') %}<p class="error">{{ errors['body_mode'] }}</p>{% endif %}
+                </div>
+                <aside class="markdown-cheatsheet" aria-label="Markdown Kurzreferenz">
+                    <div id="body-mode-help"></div>
+                </aside>
+            </div>
 
             <label for="closing">Grußformel</label>
             <input class="highlighted-field" id="closing" name="closing" type="text" value="{{ form_data.get('closing', 'Mit freundlichen Grüßen') }}">

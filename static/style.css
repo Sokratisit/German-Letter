@@ -157,6 +157,39 @@ label {
     margin-left: 0.35rem;
 }
 
+.body-editor-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 0.9rem;
+    align-items: start;
+}
+
+.body-editor-main {
+    min-width: 0;
+}
+
+.markdown-cheatsheet {
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #f7f9fc;
+    color: #425066;
+    font-size: 0.9rem;
+}
+
+.markdown-cheatsheet p {
+    margin: 0;
+    line-height: 1.35;
+}
+
+.markdown-cheatsheet p + p {
+    margin-top: 0.45rem;
+}
+
+.markdown-cheatsheet code {
+    font-size: 0.88em;
+}
+
 input,
 textarea {
     width: 100%;
@@ -238,7 +271,8 @@ button,
     .field-row-2,
     .field-row-street,
     .field-row-city,
-    .field-row-date-filename {
+    .field-row-date-filename,
+    .body-editor-layout {
         grid-template-columns: 1fr;
     }
 }

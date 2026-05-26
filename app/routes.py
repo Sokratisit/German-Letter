@@ -142,12 +142,6 @@ def guide() -> str:
     return render_template("guide.html")
 
 
-@bp.get("/anleitung-markdown")
-def markdown_guide() -> str:
-    logger.debug("markdown_guide called")
-    return render_template("markdown_guide.html")
-
-
 @bp.get("/faq")
 def faq() -> str:
     logger.debug("faq called")

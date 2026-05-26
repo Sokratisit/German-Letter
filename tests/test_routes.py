@@ -92,18 +92,6 @@ def test_guide_page_links_back_to_main_page() -> None:
     assert 'href="/"' in body
 
 
-def test_markdown_guide_page_exists_and_links_back() -> None:
-    app = create_app()
-    client = app.test_client()
-
-    response = client.get("/anleitung-markdown")
-
-    body = response.get_data(as_text=True)
-    assert response.status_code == 200
-    assert "<h1>Markdown Anleitung</h1>" in body
-    assert 'href="/"' in body
-
-
 def test_generate_sets_sender_and_recipient_cookies(monkeypatch) -> None:
     app = create_app()
     client = app.test_client()
